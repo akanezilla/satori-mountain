@@ -31,7 +31,7 @@ void drawArmor();
 void drawMarker();
 void drawStamina();
 
-enum DIRECTION {DOWN, RIGHT, UP, LEFT} direction;
+extern enum DIRECTION {DOWN, RIGHT, UP, LEFT} direction;
 enum KOROKDIRECTION {KDOWN, KUP} korokDirection;
 
 int chestOpened;

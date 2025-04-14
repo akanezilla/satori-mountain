@@ -17,6 +17,7 @@
 #include "losePal.h"
 #include "spring.h"
 #include "springMap.h"
+#include "springTrial.h"
 
 void initialize();
 
@@ -98,6 +99,18 @@ void goToStart() {
     shadowOAM[korok1.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[korok2.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[spiritOrb1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[spiritOrb2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[spiritOrb3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[lotm.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[stamina1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[stamina2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[stamina3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaHold1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaHold2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaHold3.oamIndex].attr0 = ATTR0_HIDE;
     DMANow(3, shadowOAM, OAM, 128*4);
 
     state = START;
@@ -130,6 +143,7 @@ void goToGame() {
     DMANow(3, zeldaTiles, &CHARBLOCK[0], zeldaTilesLen / 2);
     DMANow(3, zeldaMapMap, &SCREENBLOCK[8], zeldaMapLen / 2);
     DMANow(3, zeldaPal, BG_PALETTE, 256);
+    shadowOAM[lotm.oamIndex].attr0 = ATTR0_HIDE;
 
     state = GAME;
 }
@@ -165,6 +179,12 @@ void goToPause() {
     shadowOAM[staminaHold1.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[staminaHold2.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[staminaHold3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[spiritOrb2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[spiritOrb3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[lotm.oamIndex].attr0 = ATTR0_HIDE;
     DMANow(3, shadowOAM, OAM, 128*4);
 
     state = PAUSE;
@@ -187,6 +207,18 @@ void goToWin() {
     shadowOAM[korok1.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[korok2.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[spiritOrb1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[spiritOrb2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[spiritOrb3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[lotm.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[stamina1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[stamina2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[stamina3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaHold1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaHold2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaHold3.oamIndex].attr0 = ATTR0_HIDE;
     DMANow(3, shadowOAM, OAM, 128*4);
 
     state = WIN;
@@ -209,6 +241,18 @@ void goToLose() {
     shadowOAM[korok1.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[korok2.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[spiritOrb1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[spiritOrb2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[spiritOrb3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[lotm.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[stamina1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[stamina2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[stamina3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaHold1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaHold2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaHold3.oamIndex].attr0 = ATTR0_HIDE;
     DMANow(3, shadowOAM, OAM, 128*4);
 
     state = LOSE;
@@ -231,7 +275,16 @@ void goToSpring() {
     shadowOAM[korok1.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[korok2.oamIndex].attr0 = ATTR0_HIDE;
     spiritOrb1.active = 0;
+    spiritOrb2.active = 0;
+    spiritOrb3.active = 0;
     shadowOAM[spiritOrb1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[spiritOrb2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[spiritOrb3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[lotm.oamIndex].attr0 = ATTR0_HIDE;
+    
     DMANow(3, shadowOAM, OAM, 128*4);
 
     state = SPRING;

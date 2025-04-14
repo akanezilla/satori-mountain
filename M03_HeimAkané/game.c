@@ -145,7 +145,7 @@ void initSpiritOrb() {
     spiritOrb2.x = 120;
     spiritOrb2.y = 240;
     spiritOrb2.width = 16;
-    spiritOrb2.height = 16;
+    spiritOrb2.height = 15;
     spiritOrb2.oamIndex = 14;
     spiritOrb2.active = 1;
 

@@ -10,7 +10,7 @@ void initBlupees();
 void initLotM();
 void updateSpring();
 void updatePlayerSpring();
-void updateBluepees();
+void updateBlupees();
 void updateLotM();
 void drawSpring();
 void drawPlayerSpring();
@@ -24,7 +24,13 @@ SPRITE blupee2;
 SPRITE blupee3;
 SPRITE lotm;
 
-enum DIRECTION {DOWN, RIGHT, UP, LEFT} direction;
+int countdown1;
+int countdown2;
+int countdown3;
+
+//enum DIRECTION {DOWN, RIGHT, UP, LEFT} direction;
+enum BLUPEEDIRECTION {BDOWN, BUP} blupeeDirection;
+enum BLUPEEDIRECTION2 {BLEFT, BRIGHT} blupeeDirection2;
 
 OBJ_ATTR shadowOAM[128];
 

@@ -76,6 +76,8 @@ typedef struct {
   int timeUntilNextFrame;
   int direction;
   int korokDirection;
+  int blupeeDirection;
+  int blupeeDirection2;
   int isAnimating;
   int currentFrame;
   int numFrames;
