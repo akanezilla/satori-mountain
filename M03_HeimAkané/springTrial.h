@@ -5,7 +5,9 @@
 #include "collisionSpring.h"
 
 void initSpring();
+void reInitSpring();
 void initPlayerSpring();
+void reInitPlayerSpring();
 void initBlupees();
 void initLotM();
 void updateSpring();

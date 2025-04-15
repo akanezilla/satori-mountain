@@ -5,7 +5,9 @@
 #include "collisionZelda.h"
 
 void initGame();
+void reInitGame();
 void initPlayer();
+void reInitPlayer();
 void initKorok1();
 void initKorok2();
 void initSpiritOrb();
@@ -84,9 +86,46 @@ void initGame() {
     DMANow(3, shadowOAM, OAM, 128*4);
 }
 
+void reInitGame() {
+    REG_DISPCTL = MODE(0) | BG_ENABLE(0) | SPRITE_ENABLE;
+    REG_BG0CNT = BG_CHARBLOCK(0) | BG_SCREENBLOCK(8) | BG_SIZE_LARGE;
+
+    DMANow(3, linkTiles, &CHARBLOCK[4], linkTilesLen / 2);
+    DMANow(3, linkPal, SPRITE_PAL, 256);
+    
+    hOff = 0;
+    vOff = 0;
+    cooldown = 0;
+    reInitPlayer();
+    initKorok1();
+    initKorok2();
+    initSpiritOrb();
+    initChest();
+    initArmor();
+    initMarker();
+    initStamina();
+}
+
 void initPlayer() {
     player.x = 256;
     player.y = 96;
+    player.width = 16;
+    player.height = 24;
+    player.xVel = 1;
+    player.yVel = 1;
+    player.timeUntilNextFrame = 15;
+    player.direction = DOWN;
+    player.isAnimating = 0;
+    player.currentFrame = 0;
+    player.numFrames = 3;
+    player.oamIndex = 0;
+    player.oldX = player.x;
+    player.oldY = player.y;
+}
+
+void reInitPlayer() {
+    player.x = 472;
+    player.y = 400;
     player.width = 16;
     player.height = 24;
     player.xVel = 1;

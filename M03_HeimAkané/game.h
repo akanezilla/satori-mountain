@@ -4,7 +4,9 @@
 #include "sprites.h"
 
 void initGame();
+void reInitGame();
 void initPlayer();
+void reInitPlayer();
 void initKorok1();
 void initKorok2();
 void initSpiritOrb();

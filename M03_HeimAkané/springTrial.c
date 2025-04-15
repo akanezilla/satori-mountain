@@ -4,7 +4,9 @@
 #include "mode0.h"
 
 void initSpring();
+void reInitSpring();
 void initPlayerSpring();
+void reInitPlayerSpring();
 void initBlupees();
 void initLotM();
 void updateSpring();
@@ -52,9 +54,32 @@ void initSpring() {
     DMANow(3, shadowOAM, OAM, 128*4);
 }
 
+void reInitSpring() {
+    reInitPlayerSpring();
+    initBlupees();
+    initLotM();
+}
+
 void initPlayerSpring() {
     player.x = 24;
     player.y = 24;
+    player.width = 16;
+    player.height = 32;
+    player.xVel = 1;
+    player.yVel = 1;
+    player.timeUntilNextFrame = 15;
+    player.direction = DOWN;
+    player.isAnimating = 0;
+    player.currentFrame = 0;
+    player.numFrames = 3;
+    player.oamIndex = 0;
+    player.oldX = player.x;
+    player.oldY = player.y;
+}
+
+void reInitPlayerSpring() {
+    player.x = 64;
+    player.y = 96;
     player.width = 16;
     player.height = 32;
     player.xVel = 1;
@@ -94,7 +119,7 @@ void initBlupees() {
     blupee2.isAnimating = 1;
     blupee2.currentFrame = 0;
     blupee2.numFrames = 3;
-    blupee2.oamIndex = 15;
+    blupee2.oamIndex = 1;
 
     blupee3.x = 136;
     blupee3.y = 192;
@@ -184,6 +209,7 @@ void updatePlayerSpring() {
         player.y = MAPHEIGHT - player.height;
     }
 
+    //restictions to complex movement
     if (hOff < 0) {
         hOff = 0;
     }
@@ -210,17 +236,14 @@ void updatePlayerSpring() {
     
     //enter overworld
     if (collision(player.x, player.y, player.width, player.height, 16, 0, 32, 24)) {
-        initGame();
+        reInitGame();
         goToGame();
     }
 
-    //enter spring
+    //enter spring trial
     if (collision(player.x, player.y, player.width, player.height, 80, 133, 80, 50)) {
-        if (hasArmor) {
-            goToWin();
-        } else {
-            goToLose();
-        }
+        initTrial();
+        goToTrial();
     }
 }
 

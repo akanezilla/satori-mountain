@@ -18,6 +18,7 @@
 #include "spring.h"
 #include "springMap.h"
 #include "springTrial.h"
+#include "trialMap.h"
 
 void initialize();
 
@@ -35,8 +36,10 @@ void goToLose();
 void lose();
 void goToSpring();
 void spring();
+void goToTrial();
+void trial();
 
-enum STATE {START, INSTRUCTIONS, GAME, PAUSE, WIN, LOSE, SPRING} state;
+enum STATE {START, INSTRUCTIONS, GAME, PAUSE, WIN, LOSE, SPRING, TRIAL} state;
 
 unsigned short buttons;
 unsigned short oldButtons;
@@ -73,6 +76,9 @@ int main() {
                 break;
             case SPRING:
                 spring();
+                break;
+            case TRIAL:
+                trial();
                 break;
         }
     }
@@ -293,6 +299,37 @@ void goToSpring() {
 void spring() {
     updateSpring();
     drawSpring();
+    waitForVBlank();
+    if (BUTTON_PRESSED(BUTTON_START)) {
+        goToPause();
+    }
+}
+
+void goToTrial() {
+    DMANow(3, springTiles, &CHARBLOCK[0], springTilesLen / 2);
+    DMANow(3, trialMapMap, &SCREENBLOCK[8], trialMapLen / 2);
+    DMANow(3, springPal, BG_PALETTE, springPalLen / 2);
+
+    //hide sprites
+    shadowOAM[player.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[korok1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[korok2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[spiritOrb1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[spiritOrb2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[spiritOrb3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[blupee3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[lotm.oamIndex].attr0 = ATTR0_HIDE;
+
+    DMANow(3, shadowOAM, OAM, 128*4);
+
+    state = TRIAL;
+}
+
+void trial() {
+    updateTrial();
+    drawTrial();
     waitForVBlank();
     if (BUTTON_PRESSED(BUTTON_START)) {
         goToPause();
