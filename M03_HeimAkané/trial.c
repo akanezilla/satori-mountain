@@ -63,7 +63,7 @@ void initLotMTrial() {
     lotm.isAnimating = 1;
     lotm.currentFrame = 0;
     lotm.numFrames = 3;
-    lotm.oamIndex = 2;
+    lotm.oamIndex = 1;
     lotm.direction = RIGHT;
 }
 
