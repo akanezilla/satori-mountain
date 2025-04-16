@@ -19,6 +19,7 @@
 #include "springMap.h"
 #include "springTrial.h"
 #include "trialMap.h"
+#include "trial.h"
 
 void initialize();
 
@@ -43,6 +44,8 @@ enum STATE {START, INSTRUCTIONS, GAME, PAUSE, WIN, LOSE, SPRING, TRIAL} state;
 
 unsigned short buttons;
 unsigned short oldButtons;
+
+enum STATE prevState;
 
 int hOff;
 int vOff;
@@ -117,6 +120,12 @@ void goToStart() {
     shadowOAM[staminaHold1.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[staminaHold2.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[staminaHold3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaBar.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece4.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece5.oamIndex].attr0 = ATTR0_HIDE;
     DMANow(3, shadowOAM, OAM, 128*4);
 
     state = START;
@@ -133,6 +142,14 @@ void goToInstructions() {
     DMANow(3, instructionsPalTiles, &CHARBLOCK[0], instructionsPalTilesLen / 2);
     DMANow(3, instructionsMap, &SCREENBLOCK[8], instructionsLen / 2);
     DMANow(3, instructionsPalPal, BG_PALETTE, instructionsPalPalLen / 2);
+
+    shadowOAM[player.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaBar.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece4.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece5.oamIndex].attr0 = ATTR0_HIDE;
 
     state = INSTRUCTIONS;
 }
@@ -191,15 +208,28 @@ void goToPause() {
     shadowOAM[blupee2.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[blupee3.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[lotm.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaBar.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece4.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece5.oamIndex].attr0 = ATTR0_HIDE;
     DMANow(3, shadowOAM, OAM, 128*4);
 
+    prevState = state;
     state = PAUSE;
 }
 
 void pause() {
     waitForVBlank();
-    if (BUTTON_PRESSED(BUTTON_START)) {
+    if (BUTTON_PRESSED(BUTTON_START) && prevState == GAME) {
         goToGame();
+    }
+    if (BUTTON_PRESSED(BUTTON_START) && prevState == SPRING) {
+        goToSpring();
+    }
+    if (BUTTON_PRESSED(BUTTON_START) && prevState == TRIAL) {
+        goToTrial();
     }
 }
 
@@ -225,6 +255,12 @@ void goToWin() {
     shadowOAM[staminaHold1.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[staminaHold2.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[staminaHold3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaBar.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece4.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece5.oamIndex].attr0 = ATTR0_HIDE;
     DMANow(3, shadowOAM, OAM, 128*4);
 
     state = WIN;
@@ -259,6 +295,12 @@ void goToLose() {
     shadowOAM[staminaHold1.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[staminaHold2.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[staminaHold3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[staminaBar.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece1.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece2.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece3.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece4.oamIndex].attr0 = ATTR0_HIDE;
+    shadowOAM[piece5.oamIndex].attr0 = ATTR0_HIDE;
     DMANow(3, shadowOAM, OAM, 128*4);
 
     state = LOSE;

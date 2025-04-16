@@ -6,18 +6,29 @@
 void initTrial();
 void initPlayerTrial();
 void initLotMTrial();
+void initBar();
 void updateTrial();
 void updatePlayerTrial();
 void updateLotMTrial();
+void updateBar();
 void drawTrial();
 void drawPlayerTrial();
 void drawLotMTrial();
+void drawBar();
 inline unsigned char colorAt3(int x, int y);
 
 enum DIRECTION {DOWN, RIGHT, UP, LEFT} direction;
 
 SPRITE player;
 SPRITE lotm;
+SPRITE staminaBar;
+SPRITE piece1;
+SPRITE piece2;
+SPRITE piece3;
+SPRITE piece4;
+SPRITE piece5;
+
+int staminaCount;
 
 void initTrial() {
     REG_DISPCTL = MODE(0) | BG_ENABLE(0) | SPRITE_ENABLE;
@@ -28,9 +39,11 @@ void initTrial() {
 
     hOff = 0;
     vOff = 0;
+    staminaCount = 0;
 
     initPlayerTrial();
     initLotMTrial();
+    initBar();
 
     hideSprites();
     waitForVBlank();
@@ -67,9 +80,53 @@ void initLotMTrial() {
     lotm.direction = RIGHT;
 }
 
+void initBar() {
+    staminaBar.x = 16;
+    staminaBar.y = 2;
+    staminaBar.width = 24;
+    staminaBar.height = 24;
+    staminaBar.oamIndex = 7;
+    
+    piece1.x = 2;
+    piece1.y = 17;
+    piece1.width = 16;
+    piece1.height = 16;
+    piece1.oamIndex = 2;
+    piece1.active = 0;
+
+    piece2.x = 2;
+    piece2.y = 27;
+    piece2.width = 16;
+    piece2.height = 16;
+    piece2.oamIndex = 3;
+    piece2.active = 0;
+
+    piece3.x = 9;
+    piece3.y = 16;
+    piece3.width = 16;
+    piece3.height = 16;
+    piece3.oamIndex = 4;
+    piece3.active = 0;
+
+    piece4.x = 9;
+    piece4.y = 30;
+    piece4.width = 16;
+    piece4.height = 16;
+    piece4.oamIndex = 5;
+    piece4.active = 0;
+    
+    piece5.x = 18;
+    piece5.y = 21;
+    piece5.width = 16;
+    piece5.height = 16;
+    piece5.oamIndex = 6;
+    piece5.active = 0;
+}
+
 void updateTrial() {
     updatePlayerTrial();
     updateLotMTrial();
+    updateBar();
 }
 
 void updatePlayerTrial() {
@@ -112,6 +169,11 @@ void updatePlayerTrial() {
             player.x -= player.xVel;
         }
     }
+    //increment stamina if colliding with lotm
+    if (BUTTON_PRESSED(BUTTON_SELECT) && collision(player.x, player.y, player.width, player.height, lotm.x, lotm.y, lotm.width, lotm.height)) {
+        staminaCount++;
+    }
+
     //restrict player to map
     if (player.x < 0) {
         player.x = 0;
@@ -195,9 +257,25 @@ void updateLotMTrial() {
     }
 }
 
+void updateBar() {
+    if (staminaCount == 10 && !piece2.active) {
+        piece2.active = 1;
+    } else if (staminaCount == 20 && !piece4.active) {
+        piece4.active = 1;
+    } else if (staminaCount == 30 && !piece5.active) {
+        piece5.active = 1;
+    } else if (staminaCount == 40 && !piece3.active) {
+        piece3.active = 1;
+    } else if (staminaCount == 50 && !piece1.active) {
+        piece1.active = 1;
+        goToWin();
+    }
+}
+
 void drawTrial() {
     drawPlayerTrial();
     drawLotMTrial();
+    drawBar();
 }
 
 void drawPlayerTrial() {
@@ -218,6 +296,54 @@ void drawLotMTrial() {
         shadowOAM[lotm.oamIndex].attr0 = ATTR0_Y(lotm.y - vOff) | ATTR0_REGULAR | ATTR0_WIDE;
         shadowOAM[lotm.oamIndex].attr1 = ATTR1_X(lotm.x - hOff) | ATTR1_LARGE;
         shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(4) | ATTR2_TILEID((8  + (lotm.currentFrame * 8)), 8);
+    }
+}
+
+void drawBar() {
+    //bar
+    shadowOAM[staminaBar.oamIndex].attr0 = ATTR0_Y(staminaBar.y) | ATTR0_REGULAR | ATTR0_SQUARE;
+    shadowOAM[staminaBar.oamIndex].attr1 = ATTR1_X(staminaBar.x) | ATTR1_MEDIUM;
+    shadowOAM[staminaBar.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(19, 0);
+
+    //pieces
+    if (piece1.active) {
+        shadowOAM[piece1.oamIndex].attr0 = ATTR0_Y(piece1.x) | ATTR0_REGULAR | ATTR0_SQUARE;
+        shadowOAM[piece1.oamIndex].attr1 = ATTR1_X(piece1.y) | ATTR1_SMALL;
+        shadowOAM[piece1.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(22, 4);
+    } else {
+        shadowOAM[piece1.oamIndex].attr0 = ATTR0_HIDE;
+    }
+
+    if (piece2.active) {
+        shadowOAM[piece2.oamIndex].attr0 = ATTR0_Y(piece2.x) | ATTR0_REGULAR | ATTR0_SQUARE;
+        shadowOAM[piece2.oamIndex].attr1 = ATTR1_X(piece2.y) | ATTR1_SMALL;
+        shadowOAM[piece2.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(24, 4);
+    } else {
+        shadowOAM[piece2.oamIndex].attr0 = ATTR0_HIDE;
+    }
+
+    if (piece3.active) {
+        shadowOAM[piece3.oamIndex].attr0 = ATTR0_Y(piece3.x) | ATTR0_REGULAR | ATTR0_SQUARE;
+        shadowOAM[piece3.oamIndex].attr1 = ATTR1_X(piece3.y) | ATTR1_SMALL;
+        shadowOAM[piece3.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(26, 4);
+    } else {
+        shadowOAM[piece3.oamIndex].attr0 = ATTR0_HIDE;
+    }
+
+    if (piece4.active) {
+        shadowOAM[piece4.oamIndex].attr0 = ATTR0_Y(piece4.x) | ATTR0_REGULAR | ATTR0_SQUARE;
+        shadowOAM[piece4.oamIndex].attr1 = ATTR1_X(piece4.y) | ATTR1_SMALL;
+        shadowOAM[piece4.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(28, 4);
+    } else {
+        shadowOAM[piece4.oamIndex].attr0 = ATTR0_HIDE;
+    }
+
+    if (piece5.active) {
+        shadowOAM[piece5.oamIndex].attr0 = ATTR0_Y(piece5.x) | ATTR0_REGULAR | ATTR0_SQUARE;
+        shadowOAM[piece5.oamIndex].attr1 = ATTR1_X(piece5.y) | ATTR1_SMALL;
+        shadowOAM[piece5.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(30, 4);
+    } else {
+        shadowOAM[piece5.oamIndex].attr0 = ATTR0_HIDE;
     }
 }
 

@@ -6,16 +6,27 @@
 void initTrial();
 void initPlayerTrial();
 void initLotMTrial();
+void initBar();
 void updateTrial();
 void updatePlayerTrial();
 void updateLotM();
+void updateBar();
 void drawTrial();
 void drawPlayerTrial();
 void drawLotMTrial();
+void drawBar();
 inline unsigned char colorAt3(int x, int y);
 
 SPRITE player;
 SPRITE lotm;
+SPRITE staminaBar;
+SPRITE piece1;
+SPRITE piece2;
+SPRITE piece3;
+SPRITE piece4;
+SPRITE piece5;
+
+int staminaCount;
 
 OBJ_ATTR shadowOAM[128];
 
