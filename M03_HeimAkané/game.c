@@ -121,6 +121,7 @@ void initPlayer() {
     player.oamIndex = 0;
     player.oldX = player.x;
     player.oldY = player.y;
+    player.active = 1;
 }
 
 void reInitPlayer() {
@@ -138,6 +139,7 @@ void reInitPlayer() {
     player.oamIndex = 0;
     player.oldX = player.x;
     player.oldY = player.y;
+    player.active = 0;
 }
 
 void initKorok1() {
@@ -496,11 +498,15 @@ void drawGame() {
 }
 
 void drawPlayer() {
-    shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
-    shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
-    shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(player.currentFrame * 2, player.direction * 4);
-    REG_BG0HOFF = hOff;
-    REG_BG0VOFF = vOff;
+    if (player.active) {
+        shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
+        shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
+        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(player.currentFrame * 2, player.direction * 4);
+        REG_BG0HOFF = hOff;
+        REG_BG0VOFF = vOff;
+    } else {
+        shadowOAM[player.oamIndex].attr0 = ATTR0_HIDE;
+    }
 }
 
 void drawKorok1() {
@@ -543,7 +549,7 @@ void drawSpiritOrb() {
         } else {
             shadowOAM[spiritOrb1.oamIndex].attr0 = ATTR0_Y(spiritOrb1.y - vOff) | ATTR0_REGULAR | ATTR0_SQUARE;
             shadowOAM[spiritOrb1.oamIndex].attr1 = ATTR1_X(spiritOrb1.x - hOff) | ATTR1_SMALL;
-            shadowOAM[spiritOrb1.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(7, 1);
+            shadowOAM[spiritOrb1.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(23, 0);
         }
     } else {
         shadowOAM[spiritOrb1.oamIndex].attr0 = ATTR0_HIDE;
@@ -559,7 +565,7 @@ void drawSpiritOrb() {
         } else {
             shadowOAM[spiritOrb2.oamIndex].attr0 = ATTR0_Y(spiritOrb2.y - vOff) | ATTR0_REGULAR | ATTR0_SQUARE;
             shadowOAM[spiritOrb2.oamIndex].attr1 = ATTR1_X(spiritOrb2.x - hOff) | ATTR1_SMALL;
-            shadowOAM[spiritOrb2.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(7, 1);
+            shadowOAM[spiritOrb2.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(23, 0);
         }
     } else {
         shadowOAM[spiritOrb2.oamIndex].attr0 = ATTR0_HIDE;
@@ -575,7 +581,7 @@ void drawSpiritOrb() {
         } else {
             shadowOAM[spiritOrb3.oamIndex].attr0 = ATTR0_Y(spiritOrb3.y - vOff) | ATTR0_REGULAR | ATTR0_SQUARE;
             shadowOAM[spiritOrb3.oamIndex].attr1 = ATTR1_X(spiritOrb3.x - hOff) | ATTR1_SMALL;
-            shadowOAM[spiritOrb3.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(7, 1);
+            shadowOAM[spiritOrb3.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(23, 0);
         }
     } else {
         shadowOAM[spiritOrb3.oamIndex].attr0 = ATTR0_HIDE;
@@ -583,7 +589,7 @@ void drawSpiritOrb() {
 }
 
 void drawChests() {
-    int tileY = ((chestOpened) ? 6 : 4);
+    int tileY = ((chestOpened) ? 2 : 0);
     if (chest.active) {
         int screenY = chest.y - vOff;
         int screenX = chest.x - hOff;
@@ -593,7 +599,7 @@ void drawChests() {
         } else {
             shadowOAM[chest.oamIndex].attr0 = ATTR0_Y(chest.y - vOff) | ATTR0_REGULAR | ATTR0_SQUARE;
             shadowOAM[chest.oamIndex].attr1 = ATTR1_X(chest.x - hOff) | ATTR1_SMALL;
-            shadowOAM[chest.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(6, tileY);
+            shadowOAM[chest.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(30, tileY);
         }
     } else {
         shadowOAM[chest.oamIndex].attr0 = ATTR0_HIDE;
@@ -610,7 +616,7 @@ void drawArmor() {
         } else {
             shadowOAM[armor.oamIndex].attr0 = ATTR0_Y(armor.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
             shadowOAM[armor.oamIndex].attr1 = ATTR1_X(armor.x - hOff) | ATTR1_MEDIUM;
-            shadowOAM[armor.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(10, 0);
+            shadowOAM[armor.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(30, 4);
         }
     } else {
         shadowOAM[armor.oamIndex].attr0 = ATTR0_HIDE;
@@ -622,7 +628,7 @@ void drawMarker() {
     if (marker.active) {
         shadowOAM[marker.oamIndex].attr0 = ATTR0_Y(marker.y - vOff) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[marker.oamIndex].attr1 = ATTR1_X(marker.x - hOff) | ATTR1_TINY;
-        shadowOAM[marker.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(8, 4);
+        shadowOAM[marker.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(25, 0);
     } else {
         shadowOAM[marker.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -633,7 +639,7 @@ void drawStamina() {
     if (stamina1.active) {
         shadowOAM[stamina1.oamIndex].attr0 = ATTR0_Y(stamina1.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[stamina1.oamIndex].attr1 = ATTR1_X(stamina1.x) | ATTR1_SMALL;
-        shadowOAM[stamina1.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(8, 6);
+        shadowOAM[stamina1.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(26, 0);
     } else {
         shadowOAM[stamina1.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -641,7 +647,7 @@ void drawStamina() {
     if (staminaHold1.active) {
         shadowOAM[staminaHold1.oamIndex].attr0 = ATTR0_Y(staminaHold1.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[staminaHold1.oamIndex].attr1 = ATTR1_X(staminaHold1.x) | ATTR1_SMALL;
-        shadowOAM[staminaHold1.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(10, 6);
+        shadowOAM[staminaHold1.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(28, 0);
     } else {
         shadowOAM[staminaHold1.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -649,7 +655,7 @@ void drawStamina() {
     if (stamina2.active) {
         shadowOAM[stamina2.oamIndex].attr0 = ATTR0_Y(stamina2.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[stamina2.oamIndex].attr1 = ATTR1_X(stamina2.x) | ATTR1_SMALL;
-        shadowOAM[stamina2.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(8, 6);
+        shadowOAM[stamina2.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(26, 0);
     } else {
         shadowOAM[stamina2.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -657,7 +663,7 @@ void drawStamina() {
     if (staminaHold2.active) {
         shadowOAM[staminaHold2.oamIndex].attr0 = ATTR0_Y(staminaHold2.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[staminaHold2.oamIndex].attr1 = ATTR1_X(staminaHold2.x) | ATTR1_SMALL;
-        shadowOAM[staminaHold2.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(10, 6);
+        shadowOAM[staminaHold2.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(28, 0);
     } else {
         shadowOAM[staminaHold2.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -665,7 +671,7 @@ void drawStamina() {
     if (stamina3.active) {
         shadowOAM[stamina3.oamIndex].attr0 = ATTR0_Y(stamina3.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[stamina3.oamIndex].attr1 = ATTR1_X(stamina3.x) | ATTR1_SMALL;
-        shadowOAM[stamina3.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(8, 6);
+        shadowOAM[stamina3.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(26, 0);
     } else {
         shadowOAM[stamina3.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -673,7 +679,7 @@ void drawStamina() {
     if (staminaHold3.active) {
         shadowOAM[staminaHold3.oamIndex].attr0 = ATTR0_Y(staminaHold3.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[staminaHold3.oamIndex].attr1 = ATTR1_X(staminaHold3.x) | ATTR1_SMALL;
-        shadowOAM[staminaHold3.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(10, 6);
+        shadowOAM[staminaHold3.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(28, 0);
     } else {
         shadowOAM[staminaHold3.oamIndex].attr0 = ATTR0_HIDE;
     }

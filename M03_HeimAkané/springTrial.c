@@ -26,6 +26,7 @@ SPRITE blupee2;
 SPRITE blupee3;
 SPRITE lotm;
 int hasArmor;
+int spiritOrbCount;
 int countdown1;
 int countdown2;
 int countdown3;
@@ -236,13 +237,13 @@ void updatePlayerSpring() {
     
     //enter overworld
     if (collision(player.x, player.y, player.width, player.height, 16, 0, 32, 24)) {
-        reInitGame();
+        initGame();
         goToGame();
     }
 
     //enter spring trial
-    if (collision(player.x, player.y, player.width, player.height, 80, 133, 80, 50)) {
-        initTrial();
+    if (collision(player.x, player.y, player.width, player.height, 80, 133, 80, 50) && (spiritOrbCount == 3 || (hasArmor && spiritOrbCount >= 1))) {
+        initTrial(); 
         goToTrial();
     }
 }
@@ -425,7 +426,7 @@ void drawLotM() {
     } else {
         shadowOAM[lotm.oamIndex].attr0 = ATTR0_Y(lotm.y - vOff) | ATTR0_REGULAR | ATTR0_WIDE;
         shadowOAM[lotm.oamIndex].attr1 = ATTR1_X(lotm.x - hOff) | ATTR1_LARGE;
-        shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(4) | ATTR2_TILEID((8  + (lotm.currentFrame * 8)), 8);
+        shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(4) | ATTR2_TILEID((6  + (lotm.currentFrame * 8)), 20);
     }
 }
 

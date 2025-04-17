@@ -99,11 +99,14 @@ void initialize() {
 }
 
 void goToStart() {
+    REG_BG0CNT = BG_CHARBLOCK(0) | BG_SCREENBLOCK(8) | BG_SIZE_SMALL;
+
     DMANow(3, startTiles, &CHARBLOCK[0], startTilesLen / 2);
     DMANow(3, startTilesMap, &SCREENBLOCK[8], startTilesMapLen / 2);
     DMANow(3, startPal, BG_PALETTE, startPalLen / 2);
 
     //hide sprites
+    player.active = 0;
     shadowOAM[player.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[korok1.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[korok2.oamIndex].attr0 = ATTR0_HIDE;
@@ -139,10 +142,13 @@ void start() {
 }
 
 void goToInstructions() {
+    REG_BG0CNT = BG_CHARBLOCK(0) | BG_SCREENBLOCK(8) | BG_SIZE_SMALL;
+
     DMANow(3, instructionsPalTiles, &CHARBLOCK[0], instructionsPalTilesLen / 2);
     DMANow(3, instructionsMap, &SCREENBLOCK[8], instructionsLen / 2);
     DMANow(3, instructionsPalPal, BG_PALETTE, instructionsPalPalLen / 2);
 
+    player.active = 0;
     shadowOAM[player.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[staminaBar.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[piece1.oamIndex].attr0 = ATTR0_HIDE;
@@ -239,6 +245,7 @@ void goToWin() {
     DMANow(3, winPalPal, BG_PALETTE, winPalPalLen / 2);
 
     //hide sprites
+    player.active = 0;
     shadowOAM[player.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[korok1.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[korok2.oamIndex].attr0 = ATTR0_HIDE;
@@ -279,6 +286,7 @@ void goToLose() {
     DMANow(3, losePalPal, BG_PALETTE, losePalPalLen / 2);
 
     //hide sprites
+    player.active = 0;
     shadowOAM[player.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[korok1.oamIndex].attr0 = ATTR0_HIDE;
     shadowOAM[korok2.oamIndex].attr0 = ATTR0_HIDE;

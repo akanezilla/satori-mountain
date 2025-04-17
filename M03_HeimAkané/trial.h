@@ -7,14 +7,17 @@ void initTrial();
 void initPlayerTrial();
 void initLotMTrial();
 void initBar();
+void initNumbers();
 void updateTrial();
 void updatePlayerTrial();
 void updateLotM();
 void updateBar();
+void updateNumbers();
 void drawTrial();
 void drawPlayerTrial();
 void drawLotMTrial();
 void drawBar();
+void drawNumbers();
 inline unsigned char colorAt3(int x, int y);
 
 SPRITE player;
@@ -25,6 +28,7 @@ SPRITE piece2;
 SPRITE piece3;
 SPRITE piece4;
 SPRITE piece5;
+SPRITE numbers;
 
 int staminaCount;
 

@@ -7,14 +7,17 @@ void initTrial();
 void initPlayerTrial();
 void initLotMTrial();
 void initBar();
+void initNumbers();
 void updateTrial();
 void updatePlayerTrial();
 void updateLotMTrial();
 void updateBar();
+void updateNumbers();
 void drawTrial();
 void drawPlayerTrial();
 void drawLotMTrial();
 void drawBar();
+void drawNumbers();
 inline unsigned char colorAt3(int x, int y);
 
 enum DIRECTION {DOWN, RIGHT, UP, LEFT} direction;
@@ -27,8 +30,13 @@ SPRITE piece2;
 SPRITE piece3;
 SPRITE piece4;
 SPRITE piece5;
+SPRITE fifteen;
+SPRITE fourteen;
+SPRITE thirteen;
+SPRITE numbers;
 
 int staminaCount;
+int alreadyAnimated;
 
 void initTrial() {
     REG_DISPCTL = MODE(0) | BG_ENABLE(0) | SPRITE_ENABLE;
@@ -40,10 +48,12 @@ void initTrial() {
     hOff = 0;
     vOff = 0;
     staminaCount = 0;
+    alreadyAnimated = 0;
 
     initPlayerTrial();
     initLotMTrial();
     initBar();
+    initNumbers();
 
     hideSprites();
     waitForVBlank();
@@ -123,10 +133,24 @@ void initBar() {
     piece5.active = 0;
 }
 
+void initNumbers() {
+    numbers.x = 208;
+    numbers.y = 0;
+    numbers.width = 16;
+    numbers.height = 16;
+    numbers.active = 1;
+    numbers.oamIndex = 8;
+    numbers.isAnimating = 1;
+    numbers.numFrames = 15;
+    numbers.currentFrame = 0;
+    numbers.timeUntilNextFrame = 60;
+}
+
 void updateTrial() {
     updatePlayerTrial();
     updateLotMTrial();
     updateBar();
+    updateNumbers();
 }
 
 void updatePlayerTrial() {
@@ -272,18 +296,48 @@ void updateBar() {
     }
 }
 
+void updateNumbers() {
+    if (numbers.isAnimating) {
+        --numbers.timeUntilNextFrame;
+        if (numbers.timeUntilNextFrame == 0) {
+            numbers.currentFrame = (numbers.currentFrame + 1) % numbers.numFrames;
+            numbers.timeUntilNextFrame = 60;
+            alreadyAnimated++;
+            mgba_printf("current frame: %d", numbers.currentFrame);
+        }
+    } else {
+        numbers.currentFrame = 0;
+    }
+
+    if (numbers.currentFrame == 0 && (alreadyAnimated > 0)) {
+        numbers.isAnimating = 0;
+        numbers.active = 0;
+        if (staminaCount >= 50) {
+            goToWin();
+        } else {
+            goToLose();
+        }
+    }
+
+}
+
 void drawTrial() {
     drawPlayerTrial();
     drawLotMTrial();
     drawBar();
+    drawNumbers();
 }
 
 void drawPlayerTrial() {
-    shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
-    shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
-    shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(player.currentFrame * 2, player.direction * 4);
-    REG_BG0HOFF = hOff;
-    REG_BG0VOFF = vOff;
+    if (player.active) {
+        shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
+        shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
+        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(player.currentFrame * 2, player.direction * 4);
+        REG_BG0HOFF = hOff;
+        REG_BG0VOFF = vOff;
+    } else {
+        shadowOAM[player.oamIndex].attr0 = ATTR0_HIDE; 
+    }
     DMANow(3, shadowOAM, OAM, 128*4);
 }
 
@@ -295,7 +349,7 @@ void drawLotMTrial() {
     } else {
         shadowOAM[lotm.oamIndex].attr0 = ATTR0_Y(lotm.y - vOff) | ATTR0_REGULAR | ATTR0_WIDE;
         shadowOAM[lotm.oamIndex].attr1 = ATTR1_X(lotm.x - hOff) | ATTR1_LARGE;
-        shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(4) | ATTR2_TILEID((8  + (lotm.currentFrame * 8)), 8);
+        shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(4) | ATTR2_TILEID((6  + (lotm.currentFrame * 8)), 20);
     }
 }
 
@@ -309,7 +363,7 @@ void drawBar() {
     if (piece1.active) {
         shadowOAM[piece1.oamIndex].attr0 = ATTR0_Y(piece1.x) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[piece1.oamIndex].attr1 = ATTR1_X(piece1.y) | ATTR1_SMALL;
-        shadowOAM[piece1.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(22, 4);
+        shadowOAM[piece1.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(19, 4);
     } else {
         shadowOAM[piece1.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -317,7 +371,7 @@ void drawBar() {
     if (piece2.active) {
         shadowOAM[piece2.oamIndex].attr0 = ATTR0_Y(piece2.x) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[piece2.oamIndex].attr1 = ATTR1_X(piece2.y) | ATTR1_SMALL;
-        shadowOAM[piece2.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(24, 4);
+        shadowOAM[piece2.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(21, 4);
     } else {
         shadowOAM[piece2.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -325,7 +379,7 @@ void drawBar() {
     if (piece3.active) {
         shadowOAM[piece3.oamIndex].attr0 = ATTR0_Y(piece3.x) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[piece3.oamIndex].attr1 = ATTR1_X(piece3.y) | ATTR1_SMALL;
-        shadowOAM[piece3.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(26, 4);
+        shadowOAM[piece3.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(23, 4);
     } else {
         shadowOAM[piece3.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -333,7 +387,7 @@ void drawBar() {
     if (piece4.active) {
         shadowOAM[piece4.oamIndex].attr0 = ATTR0_Y(piece4.x) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[piece4.oamIndex].attr1 = ATTR1_X(piece4.y) | ATTR1_SMALL;
-        shadowOAM[piece4.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(28, 4);
+        shadowOAM[piece4.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(25, 4);
     } else {
         shadowOAM[piece4.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -341,9 +395,20 @@ void drawBar() {
     if (piece5.active) {
         shadowOAM[piece5.oamIndex].attr0 = ATTR0_Y(piece5.x) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[piece5.oamIndex].attr1 = ATTR1_X(piece5.y) | ATTR1_SMALL;
-        shadowOAM[piece5.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(30, 4);
+        shadowOAM[piece5.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(27, 4);
     } else {
         shadowOAM[piece5.oamIndex].attr0 = ATTR0_HIDE;
+    }
+}
+
+void drawNumbers() {
+    int numbersY = (numbers.currentFrame < 8 ? 24 : 26);
+    if (numbers.active) {
+        shadowOAM[numbers.oamIndex].attr0 = ATTR0_Y(numbers.y) | ATTR0_REGULAR | ATTR0_SQUARE;
+        shadowOAM[numbers.oamIndex].attr1 = ATTR1_X(numbers.x) | ATTR1_SMALL;
+        shadowOAM[numbers.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(6 + ((numbers.currentFrame % 8) * 2), numbersY);
+    } else {
+        shadowOAM[numbers.oamIndex].attr0 = ATTR0_HIDE;
     }
 }
 
