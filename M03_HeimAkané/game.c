@@ -498,10 +498,16 @@ void drawGame() {
 }
 
 void drawPlayer() {
-    if (player.active) {
+    if (player.active && !hasArmor) {
         shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
         shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
         shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(player.currentFrame * 2, player.direction * 4);
+        REG_BG0HOFF = hOff;
+        REG_BG0VOFF = vOff;
+    } else if (player.active && hasArmor) {
+        shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
+        shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
+        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(6 + (player.currentFrame * 2), player.direction * 4);
         REG_BG0HOFF = hOff;
         REG_BG0VOFF = vOff;
     } else {
