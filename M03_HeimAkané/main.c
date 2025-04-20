@@ -184,9 +184,6 @@ void game() {
     if (BUTTON_PRESSED(BUTTON_START)) {
         goToPause();
     }
-    if (BUTTON_PRESSED(BUTTON_A)) {
-        goToLose();
-    }
 }
 
 void goToPause() {

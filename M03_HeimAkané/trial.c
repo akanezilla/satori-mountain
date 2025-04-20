@@ -39,8 +39,8 @@ int staminaCount;
 int alreadyAnimated;
 
 void initTrial() {
-    REG_DISPCTL = MODE(0) | BG_ENABLE(0) | SPRITE_ENABLE;
-    REG_BG0CNT = BG_CHARBLOCK(0) | BG_SCREENBLOCK(8) | BG_SIZE_SMALL;
+    REG_DISPCTL = MODE(0) | BG_ENABLE(1) | SPRITE_ENABLE;
+    REG_BG1CNT = BG_CHARBLOCK(0) | BG_SCREENBLOCK(8) | BG_SIZE_SMALL;
 
     DMANow(3, linkTiles, &CHARBLOCK[4], linkTilesLen / 2);
     DMANow(3, linkPal, SPRITE_PAL, 256);
@@ -333,8 +333,8 @@ void drawPlayerTrial() {
         shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
         shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
         shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(player.currentFrame * 2, player.direction * 4);
-        REG_BG0HOFF = hOff;
-        REG_BG0VOFF = vOff;
+        REG_BG1HOFF = hOff;
+        REG_BG1VOFF = vOff;
     } else {
         shadowOAM[player.oamIndex].attr0 = ATTR0_HIDE; 
     }
@@ -406,7 +406,7 @@ void drawNumbers() {
     if (numbers.active) {
         shadowOAM[numbers.oamIndex].attr0 = ATTR0_Y(numbers.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[numbers.oamIndex].attr1 = ATTR1_X(numbers.x) | ATTR1_SMALL;
-        shadowOAM[numbers.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(6 + ((numbers.currentFrame % 8) * 2), numbersY);
+        shadowOAM[numbers.oamIndex].attr2 = ATTR2_PALROW(5) | ATTR2_TILEID(6 + ((numbers.currentFrame % 8) * 2), numbersY);
     } else {
         shadowOAM[numbers.oamIndex].attr0 = ATTR0_HIDE;
     }

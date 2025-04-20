@@ -3,6 +3,8 @@
 #include "link.h"
 #include "mode0.h"
 #include "collisionZelda.h"
+#include "town.h"
+#include "digitalSound.h"
 
 void initGame();
 void reInitGame();
@@ -64,6 +66,11 @@ void initGame() {
 
     DMANow(3, linkTiles, &CHARBLOCK[4], linkTilesLen / 2);
     DMANow(3, linkPal, SPRITE_PAL, 256);
+
+    //play music
+    setupSoundInterrupts();
+    setupSounds();
+    playSoundA(town_data, town_length, 1);
     
     chestOpened = 0;
     hOff = 0;
@@ -507,7 +514,7 @@ void drawPlayer() {
     } else if (player.active && hasArmor) {
         shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
         shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
-        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(6 + (player.currentFrame * 2), player.direction * 4);
+        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(7) | ATTR2_TILEID(6 + (player.currentFrame * 2), player.direction * 4);
         REG_BG0HOFF = hOff;
         REG_BG0VOFF = vOff;
     } else {
@@ -605,7 +612,7 @@ void drawChests() {
         } else {
             shadowOAM[chest.oamIndex].attr0 = ATTR0_Y(chest.y - vOff) | ATTR0_REGULAR | ATTR0_SQUARE;
             shadowOAM[chest.oamIndex].attr1 = ATTR1_X(chest.x - hOff) | ATTR1_SMALL;
-            shadowOAM[chest.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(30, tileY);
+            shadowOAM[chest.oamIndex].attr2 = ATTR2_PALROW(6) | ATTR2_TILEID(30, tileY);
         }
     } else {
         shadowOAM[chest.oamIndex].attr0 = ATTR0_HIDE;
@@ -622,7 +629,7 @@ void drawArmor() {
         } else {
             shadowOAM[armor.oamIndex].attr0 = ATTR0_Y(armor.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
             shadowOAM[armor.oamIndex].attr1 = ATTR1_X(armor.x - hOff) | ATTR1_MEDIUM;
-            shadowOAM[armor.oamIndex].attr2 = ATTR2_PALROW(2) | ATTR2_TILEID(30, 4);
+            shadowOAM[armor.oamIndex].attr2 = ATTR2_PALROW(7) | ATTR2_TILEID(30, 4);
         }
     } else {
         shadowOAM[armor.oamIndex].attr0 = ATTR0_HIDE;

@@ -34,8 +34,8 @@ int countdown3;
 OBJ_ATTR shadowOAM[128];
 
 void initSpring() {
-    REG_DISPCTL = MODE(0) | BG_ENABLE(0) | SPRITE_ENABLE;
-    REG_BG0CNT = BG_CHARBLOCK(0) | BG_SCREENBLOCK(8) | BG_SIZE_SMALL;
+    REG_DISPCTL = MODE(0) | BG_ENABLE(1) | SPRITE_ENABLE;
+    REG_BG1CNT = BG_CHARBLOCK(0) | BG_SCREENBLOCK(8) | BG_SIZE_SMALL;
 
     DMANow(3, linkTiles, &CHARBLOCK[4], linkTilesLen / 2);
     DMANow(3, linkPal, SPRITE_PAL, 256);
@@ -379,14 +379,14 @@ void drawPlayerSpring() {
         shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
         shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
         shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(player.currentFrame * 2, player.direction * 4);
-        REG_BG0HOFF = hOff;
-        REG_BG0VOFF = vOff;
+        REG_BG1HOFF = hOff;
+        REG_BG1VOFF = vOff;
     } else {
         shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
         shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
         shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(6 + (player.currentFrame * 2), player.direction * 4);
-        REG_BG0HOFF = hOff;
-        REG_BG0VOFF = vOff;
+        REG_BG1HOFF = hOff;
+        REG_BG1VOFF = vOff;
     }
     DMANow(3, shadowOAM, OAM, 128*4);
 }

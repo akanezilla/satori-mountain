@@ -3,6 +3,9 @@
 
 #include "gba.h"
 
+void eraseText();
+void textToTile(char string[], int offset);
+
 // Background Control Registers
 #define REG_BG0CNT (*(volatile unsigned short*) 0x4000008) // Background 0 control register
 #define REG_BG1CNT (*(volatile unsigned short*) 0x400000A) // Background 1 control register
