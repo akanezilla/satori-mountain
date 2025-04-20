@@ -1,21 +1,25 @@
 #How to play:
 - use UP, DOWN, RIGHT, LEFT to move around the map
 - press SELECT to open the chest and BUTTON A to collect the armor
-- currently, enter the spring via the bottom right corner, enter the pool with the armor to win, enter without it to lose
+- enter the spring by following the petals and entering the pond with either 3 stamina orbs collected or 1 orb and the armor
+- be colliding with the LotM in the actual trial and press BUTTON SELECT to fill the stamina wheel before time runs out
 
 #Things I added:
-- finalized maps for both the main map and the spring trial
-- collision maps for both maps
-- added logic for opening chests
-- added complex movement
-- added markers for interacting with chests/koroks
+- finalized maps for the actual trial
+- added logic for absorbing armor and changed sprite to reflect that
+- finalized stamina sprites, armor sprite, armored link, stamina wheel, blupees, and the countdown numbers
+- added final game logic
+- added stipulations for entering the trial (collecting stamina/armor)
+- looping music (town) and non-looping (collecting the armor)
+- palette modification when non-armored Link collects spirit orbs
 
 #Things to add:
-- LotM/blupee sprites
-- stamina bar
-- spring trial logic
-- maybe some korok seeds hidden
+- LotM sprite, start/pause/win/lose final art
+- better collision map
+- priority for sprites
+- maybe korok seeds for extra fun
+
 
 #Buggy things:
-- I kept trying to add a stamina bar as a sprite to my map but it ruined all my sprites for some reason
-- start/instructions tilemaps are fine when first starting the game but weird after i win/lose once
+- sometimes a blupee will not deactivate when the spring trial starts
+- the start/pause states will be moved around (as if following hoff/voff once game is started)

@@ -4,6 +4,7 @@
 #include "mode0.h"
 #include "collisionZelda.h"
 #include "town.h"
+#include "get.h"
 #include "digitalSound.h"
 
 void initGame();
@@ -129,6 +130,8 @@ void initPlayer() {
     player.oldX = player.x;
     player.oldY = player.y;
     player.active = 1;
+    player.colorstate = 1;
+    player.colorTimer = 0;
 }
 
 void reInitPlayer() {
@@ -377,6 +380,18 @@ void updatePlayer() {
         initSpring();
         goToSpring();
     }
+
+    //make player flash if collecting a spirit orb
+    if (player.colorstate == 9 && player.colorTimer == 0) {
+        player.colorTimer = 60;
+    }
+
+    if (player.colorTimer > 0) {
+        player.colorTimer--;
+        if (player.colorTimer == 0) {
+            player.colorstate = 1;
+        }
+    }
 }
 
 void updateKorok1() {
@@ -425,14 +440,17 @@ void updateSpiritOrb() {
     if (collision(player.x, player.y, player.width, player.height, spiritOrb1.x, spiritOrb1.y, spiritOrb1.width, spiritOrb1.height) && spiritOrb1.active) {
         spiritOrb1.active = 0;
         spiritOrbCount++;
+        player.colorstate = 9;
     }
     if (collision(player.x, player.y, player.width, player.height, spiritOrb2.x, spiritOrb2.y, spiritOrb2.width, spiritOrb2.height) && spiritOrb2.active) {
         spiritOrb2.active = 0;
         spiritOrbCount++;
+        player.colorstate = 9;
     }
     if (collision(player.x, player.y, player.width, player.height, spiritOrb3.x, spiritOrb3.y, spiritOrb3.width, spiritOrb3.height) && spiritOrb3.active) {
         spiritOrb3.active = 0;
         spiritOrbCount++;
+        player.colorstate = 9;
     }
 }
 
@@ -450,6 +468,7 @@ void updateChests() {
     if (BUTTON_PRESSED(BUTTON_B) && armor.active) {
         armor.active = 0;
         hasArmor = 1;
+        playSoundB(get_data, get_length, 0);
     }
 }
 
@@ -508,7 +527,7 @@ void drawPlayer() {
     if (player.active && !hasArmor) {
         shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
         shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
-        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(player.currentFrame * 2, player.direction * 4);
+        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(player.colorstate) | ATTR2_TILEID(player.currentFrame * 2, player.direction * 4);
         REG_BG0HOFF = hOff;
         REG_BG0VOFF = vOff;
     } else if (player.active && hasArmor) {

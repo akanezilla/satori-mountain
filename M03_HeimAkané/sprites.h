@@ -83,6 +83,8 @@ typedef struct {
   int numFrames;
   int active;
   u8 oamIndex; 
+  int colorstate;
+  int colorTimer;
 } SPRITE;
 
 #endif

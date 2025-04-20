@@ -143,6 +143,7 @@ void start() {
 
 void goToInstructions() {
     REG_BG0CNT = BG_CHARBLOCK(0) | BG_SCREENBLOCK(8) | BG_SIZE_SMALL;
+    REG_DISPCTL = MODE(0) | BG_ENABLE(0) | SPRITE_ENABLE;
 
     DMANow(3, instructionsPalTiles, &CHARBLOCK[0], instructionsPalTilesLen / 2);
     DMANow(3, instructionsMap, &SCREENBLOCK[8], instructionsLen / 2);

@@ -303,7 +303,6 @@ void updateNumbers() {
             numbers.currentFrame = (numbers.currentFrame + 1) % numbers.numFrames;
             numbers.timeUntilNextFrame = 60;
             alreadyAnimated++;
-            mgba_printf("current frame: %d", numbers.currentFrame);
         }
     } else {
         numbers.currentFrame = 0;

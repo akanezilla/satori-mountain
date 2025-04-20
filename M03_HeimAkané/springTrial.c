@@ -102,7 +102,7 @@ void initBlupees() {
     blupee1.height = 16;
     blupee1.xVel = 1;
     blupee1.yVel = 1;
-    blupee1.timeUntilNextFrame = 25;
+    blupee1.timeUntilNextFrame = 10;
     blupee1.blupeeDirection = DOWN;
     blupee1.isAnimating = 1;
     blupee1.currentFrame = 0;
@@ -115,7 +115,7 @@ void initBlupees() {
     blupee2.height = 16;
     blupee2.xVel = 1;
     blupee2.yVel = 1;
-    blupee2.timeUntilNextFrame = 15;
+    blupee2.timeUntilNextFrame = 10;
     blupee2.blupeeDirection = DOWN;
     blupee2.isAnimating = 1;
     blupee2.currentFrame = 0;
@@ -128,7 +128,7 @@ void initBlupees() {
     blupee3.height = 16;
     blupee3.xVel = 1;
     blupee3.yVel = 1;
-    blupee3.timeUntilNextFrame = 15;
+    blupee3.timeUntilNextFrame = 10;
     blupee3.blupeeDirection2 = LEFT;
     blupee3.isAnimating = 1;
     blupee3.currentFrame = 0;
@@ -328,7 +328,7 @@ void updateBlupees() {
         --blupee1.timeUntilNextFrame;
         if (blupee1.timeUntilNextFrame == 0) {
             blupee1.currentFrame = (blupee1.currentFrame + 1) % blupee1.numFrames;
-            blupee1.timeUntilNextFrame = 25;
+            blupee1.timeUntilNextFrame = 10;
         }
     } else {
         blupee1.currentFrame = 0;
@@ -338,7 +338,7 @@ void updateBlupees() {
         --blupee2.timeUntilNextFrame;
         if (blupee2.timeUntilNextFrame == 0) {
             blupee2.currentFrame = (blupee2.currentFrame + 1) % blupee2.numFrames;
-            blupee2.timeUntilNextFrame = 15;
+            blupee2.timeUntilNextFrame = 10;
         }
     } else {
         blupee2.currentFrame = 0;
@@ -348,7 +348,7 @@ void updateBlupees() {
         --blupee3.timeUntilNextFrame;
         if (blupee3.timeUntilNextFrame == 0) {
             blupee3.currentFrame = (blupee3.currentFrame + 1) % blupee3.numFrames;
-            blupee3.timeUntilNextFrame = 15;
+            blupee3.timeUntilNextFrame = 10;
         }
     } else {
         blupee3.currentFrame = 0;
@@ -400,7 +400,7 @@ void drawBlupees() {
         int blupee1Y = (blupee1.blupeeDirection == BDOWN) ? 0 : 2;
         shadowOAM[blupee1.oamIndex].attr0 = ATTR0_Y(blupee1.y - vOff) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[blupee1.oamIndex].attr1 = ATTR1_X(blupee1.x - hOff) | ATTR1_SMALL;
-        shadowOAM[blupee1.oamIndex].attr2 = ATTR2_PALROW(4) | ATTR2_TILEID((13 + (blupee1.currentFrame * 2)), blupee1Y);
+        shadowOAM[blupee1.oamIndex].attr2 = ATTR2_PALROW(8) | ATTR2_TILEID((13 + (blupee1.currentFrame * 2)), blupee1Y);
     }
 
     int screenY2 = blupee2.y - vOff;
@@ -411,7 +411,7 @@ void drawBlupees() {
         int blupee2Y = (blupee2.blupeeDirection == BDOWN) ? 0 : 2;
         shadowOAM[blupee2.oamIndex].attr0 = ATTR0_Y(blupee2.y - vOff) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[blupee2.oamIndex].attr1 = ATTR1_X(blupee2.x - hOff) | ATTR1_SMALL;
-        shadowOAM[blupee2.oamIndex].attr2 = ATTR2_PALROW(4) | ATTR2_TILEID((13 + (blupee2.currentFrame * 2)), blupee2Y);
+        shadowOAM[blupee2.oamIndex].attr2 = ATTR2_PALROW(8) | ATTR2_TILEID((13 + (blupee2.currentFrame * 2)), blupee2Y);
     }
 
     int screenY3 = blupee3.y - vOff;
@@ -422,7 +422,7 @@ void drawBlupees() {
         int blupee3Y = (blupee3.blupeeDirection2 == BLEFT) ? 4 : 6;
         shadowOAM[blupee3.oamIndex].attr0 = ATTR0_Y(blupee3.y - vOff) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[blupee3.oamIndex].attr1 = ATTR1_X(blupee3.x - hOff) | ATTR1_SMALL;
-        shadowOAM[blupee3.oamIndex].attr2 = ATTR2_PALROW(4) | ATTR2_TILEID((13 + (blupee3.currentFrame * 2)), blupee3Y);
+        shadowOAM[blupee3.oamIndex].attr2 = ATTR2_PALROW(8) | ATTR2_TILEID((13 + (blupee3.currentFrame * 2)), blupee3Y);
     }
 }
 
