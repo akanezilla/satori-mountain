@@ -3,7 +3,7 @@
 
 #define CLOUDTILES_WIDTH  (32)
 #define CLOUDTILES_HEIGHT (32)
-#define cloudTilesLen (2048)
+#define cloudTilesMapLen (2048)
 
 extern const unsigned short cloudTilesMap[1024];
 

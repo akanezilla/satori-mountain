@@ -218,7 +218,7 @@ void goToWin() {
     DMANow(3, cloudsPal, BG_PALETTE, cloudsPalLen / 2);
 
     hOff = 0;
-    //hOff2 = 0;
+    hOff2 = 0;
     vOff = 0;
 
     player.active = 0;
@@ -230,9 +230,9 @@ void goToWin() {
 
 void win() {
     hOff += 1;
-    //hOff2 += 2;
+    hOff2 += 2;
     REG_BG0HOFF = hOff;
-    //REG_BG1HOFF = hOff2;
+    REG_BG1HOFF = hOff2;
     waitForVBlank();
     if (BUTTON_PRESSED(BUTTON_START)) {
         goToStart();
