@@ -2,6 +2,8 @@
 #include "sprites.h"
 #include "link.h"
 #include "mode0.h"
+#include "fight.h"
+#include "digitalSound.h"
 
 void initTrial();
 void initPlayerTrial();
@@ -37,6 +39,7 @@ SPRITE numbers;
 
 int staminaCount;
 int alreadyAnimated;
+extern int hasArmor;
 
 void initTrial() {
     REG_DISPCTL = MODE(0) | BG_ENABLE(1) | SPRITE_ENABLE;
@@ -49,6 +52,11 @@ void initTrial() {
     vOff = 0;
     staminaCount = 0;
     alreadyAnimated = 0;
+
+    initSound();
+    setupSoundInterrupts();
+    setupSounds();
+    playSoundA(fight_data, fight_length, 1);
 
     initPlayerTrial();
     initLotMTrial();
@@ -75,6 +83,7 @@ void initPlayerTrial() {
     player.oamIndex = 0;
     player.oldX = player.x;
     player.oldY = player.y;
+    player.active = 1;
 }
 
 void initLotMTrial() {
@@ -238,12 +247,6 @@ void updatePlayerTrial() {
     } else {
         player.currentFrame = 1;
     }
-    
-    //enter spring
-    if (collision(player.x, player.y, player.width, player.height, 16, 0, 32, 24)) {
-        reInitSpring();
-        goToSpring();
-    }
 }
 
 void updateLotMTrial() {
@@ -263,10 +266,12 @@ void updateLotMTrial() {
         lotm.direction = RIGHT;
     } else if (lotm.x == 184 && lotm.direction == RIGHT) {
         lotm.direction = DOWN;
+        lotm.numFrames = 2;
     } else if (lotm.y == 176 && lotm.direction == DOWN) {
         lotm.direction = LEFT;
     } else if (lotm.x == 8 && lotm.direction == LEFT) {
         lotm.direction = UP;
+        lotm.numFrames = 2;
     }
 
     //animating logic
@@ -328,13 +333,20 @@ void drawTrial() {
 }
 
 void drawPlayerTrial() {
-    if (player.active) {
+    if (player.active && !hasArmor) {
         shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
         shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
         shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(player.currentFrame * 2, player.direction * 4);
         REG_BG1HOFF = hOff;
         REG_BG1VOFF = vOff;
-    } else {
+    } else if (player.active && hasArmor) {
+        shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
+        shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
+        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(7) | ATTR2_TILEID(6 + (player.currentFrame * 2), player.direction * 4);
+        REG_BG1HOFF = hOff;
+        REG_BG1VOFF = vOff;
+    } 
+    else {
         shadowOAM[player.oamIndex].attr0 = ATTR0_HIDE; 
     }
     DMANow(3, shadowOAM, OAM, 128*4);
@@ -346,9 +358,24 @@ void drawLotMTrial() {
     if (screenY > SCREENHEIGHT || screenX > SCREENWIDTH || screenY < -lotm.height || screenX < -lotm.width) {
         shadowOAM[lotm.oamIndex].attr0 = ATTR0_HIDE;
     } else {
-        shadowOAM[lotm.oamIndex].attr0 = ATTR0_Y(lotm.y - vOff) | ATTR0_REGULAR | ATTR0_WIDE;
-        shadowOAM[lotm.oamIndex].attr1 = ATTR1_X(lotm.x - hOff) | ATTR1_LARGE;
-        shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(4) | ATTR2_TILEID((6  + (lotm.currentFrame * 8)), 20);
+        if (lotm.direction == LEFT) {
+            shadowOAM[lotm.oamIndex].attr0 = ATTR0_Y(lotm.y - vOff) | ATTR0_REGULAR | ATTR0_WIDE;
+            shadowOAM[lotm.oamIndex].attr1 = ATTR1_X(lotm.x - hOff) | ATTR1_LARGE;
+            shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(8) | ATTR2_TILEID((6  + (lotm.currentFrame * 8)), 20);
+        } else if (lotm.direction == RIGHT) {
+            shadowOAM[lotm.oamIndex].attr0 = ATTR0_Y(lotm.y - vOff) | ATTR0_REGULAR | ATTR0_WIDE;
+            shadowOAM[lotm.oamIndex].attr1 = ATTR1_X(lotm.x - hOff) | ATTR1_LARGE;
+            shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(8) | ATTR2_TILEID((6  + (lotm.currentFrame * 8)), 24);
+        } else if (lotm.direction == DOWN) {
+            shadowOAM[lotm.oamIndex].attr0 = ATTR0_Y(lotm.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
+            shadowOAM[lotm.oamIndex].attr1 = ATTR1_X(lotm.x - hOff) | ATTR1_MEDIUM;
+            shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(8) | ATTR2_TILEID(12, 12 + (lotm.currentFrame * 4));
+        } else if (lotm.direction == UP) {
+            shadowOAM[lotm.oamIndex].attr0 = ATTR0_Y(lotm.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
+            shadowOAM[lotm.oamIndex].attr1 = ATTR1_X(lotm.x - hOff) | ATTR1_MEDIUM;
+            shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(8) | ATTR2_TILEID(14, 12 + (lotm.currentFrame * 4));
+        }
+        
     }
 }
 
@@ -401,11 +428,11 @@ void drawBar() {
 }
 
 void drawNumbers() {
-    int numbersY = (numbers.currentFrame < 8 ? 24 : 26);
+    int numbersY = (numbers.currentFrame < 8 ? 8 : 10);
     if (numbers.active) {
         shadowOAM[numbers.oamIndex].attr0 = ATTR0_Y(numbers.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[numbers.oamIndex].attr1 = ATTR1_X(numbers.x) | ATTR1_SMALL;
-        shadowOAM[numbers.oamIndex].attr2 = ATTR2_PALROW(5) | ATTR2_TILEID(6 + ((numbers.currentFrame % 8) * 2), numbersY);
+        shadowOAM[numbers.oamIndex].attr2 = ATTR2_PALROW(5) | ATTR2_TILEID(12 + ((numbers.currentFrame % 8) * 2), numbersY);
     } else {
         shadowOAM[numbers.oamIndex].attr0 = ATTR0_HIDE;
     }

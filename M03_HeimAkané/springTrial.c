@@ -2,6 +2,8 @@
 #include "sprites.h"
 #include "link.h"
 #include "mode0.h"
+#include "greatFF.h"
+#include "digitalSound.h"
 
 void initSpring();
 void reInitSpring();
@@ -9,6 +11,7 @@ void initPlayerSpring();
 void reInitPlayerSpring();
 void initBlupees();
 void initLotM();
+void initStaminaSpring();
 void updateSpring();
 void updatePlayerSpring();
 void updateBlupees();
@@ -18,18 +21,19 @@ void drawPlayerSpring();
 void drawBlupees();
 void drawLotM();
 inline unsigned char colorAt2(int x, int y);
-enum DIRECTION {DOWN, RIGHT, UP, LEFT} direction;
 
 SPRITE player;
 SPRITE blupee1;
 SPRITE blupee2;
 SPRITE blupee3;
 SPRITE lotm;
-int hasArmor;
-int spiritOrbCount;
 int countdown1;
 int countdown2;
 int countdown3;
+extern int hasArmor;
+extern int spiritOrbCount;
+
+extern enum DIRECTION {DOWN, RIGHT, UP, LEFT} direction;
 
 OBJ_ATTR shadowOAM[128];
 
@@ -49,6 +53,11 @@ void initSpring() {
     initPlayerSpring();
     initBlupees();
     initLotM();
+    initSound();
+
+    setupSoundInterrupts();
+    setupSounds();
+    playSoundA(greatFF_data, greatFF_length, 1);
 
     hideSprites();
     waitForVBlank();
@@ -69,7 +78,7 @@ void initPlayerSpring() {
     player.xVel = 1;
     player.yVel = 1;
     player.timeUntilNextFrame = 15;
-    player.direction = DOWN;
+    player.direction = RIGHT;
     player.isAnimating = 0;
     player.currentFrame = 0;
     player.numFrames = 3;
@@ -102,12 +111,13 @@ void initBlupees() {
     blupee1.height = 16;
     blupee1.xVel = 1;
     blupee1.yVel = 1;
-    blupee1.timeUntilNextFrame = 10;
+    blupee1.timeUntilNextFrame = 5;
     blupee1.blupeeDirection = DOWN;
     blupee1.isAnimating = 1;
     blupee1.currentFrame = 0;
     blupee1.numFrames = 3;
-    blupee1.oamIndex = 14;
+    blupee1.oamIndex = 26;
+    blupee1.active = 1;
 
     blupee2.x = 176;
     blupee2.y = 72;
@@ -115,12 +125,13 @@ void initBlupees() {
     blupee2.height = 16;
     blupee2.xVel = 1;
     blupee2.yVel = 1;
-    blupee2.timeUntilNextFrame = 10;
+    blupee2.timeUntilNextFrame = 5;
     blupee2.blupeeDirection = DOWN;
     blupee2.isAnimating = 1;
     blupee2.currentFrame = 0;
     blupee2.numFrames = 3;
     blupee2.oamIndex = 1;
+    blupee2.active = 1;
 
     blupee3.x = 136;
     blupee3.y = 192;
@@ -128,12 +139,13 @@ void initBlupees() {
     blupee3.height = 16;
     blupee3.xVel = 1;
     blupee3.yVel = 1;
-    blupee3.timeUntilNextFrame = 10;
+    blupee3.timeUntilNextFrame = 5;
     blupee3.blupeeDirection2 = LEFT;
     blupee3.isAnimating = 1;
     blupee3.currentFrame = 0;
     blupee3.numFrames = 3;
     blupee3.oamIndex = 16;
+    blupee3.active = 1;
 }
 
 void initLotM() {
@@ -141,10 +153,10 @@ void initLotM() {
     lotm.y = 136;
     lotm.width = 40;
     lotm.height = 24;
-    lotm.timeUntilNextFrame = 15;
+    lotm.timeUntilNextFrame = 60;
     lotm.isAnimating = 1;
     lotm.currentFrame = 0;
-    lotm.numFrames = 3;
+    lotm.numFrames = 2;
     lotm.oamIndex = 2;
 }
 
@@ -237,7 +249,7 @@ void updatePlayerSpring() {
     
     //enter overworld
     if (collision(player.x, player.y, player.width, player.height, 16, 0, 32, 24)) {
-        initGame();
+        reInitGame();
         goToGame();
     }
 
@@ -328,20 +340,22 @@ void updateBlupees() {
         --blupee1.timeUntilNextFrame;
         if (blupee1.timeUntilNextFrame == 0) {
             blupee1.currentFrame = (blupee1.currentFrame + 1) % blupee1.numFrames;
-            blupee1.timeUntilNextFrame = 10;
+            blupee1.timeUntilNextFrame = 5;
         }
     } else {
         blupee1.currentFrame = 0;
+        blupee1.timeUntilNextFrame = 5;
     }
 
     if (blupee2.isAnimating) {
         --blupee2.timeUntilNextFrame;
         if (blupee2.timeUntilNextFrame == 0) {
             blupee2.currentFrame = (blupee2.currentFrame + 1) % blupee2.numFrames;
-            blupee2.timeUntilNextFrame = 10;
+            blupee2.timeUntilNextFrame = 5;
         }
     } else {
         blupee2.currentFrame = 0;
+        blupee2.timeUntilNextFrame = 5;
     }
 
     if (blupee3.isAnimating) {
@@ -352,6 +366,7 @@ void updateBlupees() {
         }
     } else {
         blupee3.currentFrame = 0;
+        blupee3.timeUntilNextFrame = 10;
     }
 }
 
@@ -361,10 +376,11 @@ void updateLotM() {
         --lotm.timeUntilNextFrame;
         if (lotm.timeUntilNextFrame == 0) {
             lotm.currentFrame = (lotm.currentFrame + 1) % lotm.numFrames;
-            lotm.timeUntilNextFrame = 25;
+            lotm.timeUntilNextFrame = 60;
         }
     } else {
-        lotm.currentFrame = 0;
+        lotm.currentFrame = 1;
+        lotm.timeUntilNextFrame = 60;
     }
 }
 
@@ -375,7 +391,7 @@ void drawSpring() {
 }
 
 void drawPlayerSpring() {
-    if (hasArmor) {
+    if (!hasArmor) {
         shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
         shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
         shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(player.currentFrame * 2, player.direction * 4);
@@ -384,7 +400,7 @@ void drawPlayerSpring() {
     } else {
         shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
         shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
-        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(6 + (player.currentFrame * 2), player.direction * 4);
+        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(7) | ATTR2_TILEID(6 + (player.currentFrame * 2), player.direction * 4);
         REG_BG1HOFF = hOff;
         REG_BG1VOFF = vOff;
     }
@@ -394,7 +410,7 @@ void drawPlayerSpring() {
 void drawBlupees() {
     int screenY1 = blupee1.y - vOff;
     int screenX1 = blupee1.x - hOff;
-    if (screenY1 > SCREENHEIGHT || screenX1 > SCREENWIDTH || screenY1 < -blupee1.height || screenX1 < -blupee1.width) {
+    if (screenY1 > SCREENHEIGHT || screenX1 > SCREENWIDTH || screenY1 < -blupee1.height || screenX1 < -blupee1.width || !blupee1.active) {
         shadowOAM[blupee1.oamIndex].attr0 = ATTR0_HIDE;
     } else {
         int blupee1Y = (blupee1.blupeeDirection == BDOWN) ? 0 : 2;
@@ -405,7 +421,7 @@ void drawBlupees() {
 
     int screenY2 = blupee2.y - vOff;
     int screenX2 = blupee2.x - hOff;
-    if (screenY2 > SCREENHEIGHT || screenX2 > SCREENWIDTH || screenY2 < -blupee2.height || screenX2 < -blupee2.width) {
+    if (screenY2 > SCREENHEIGHT || screenX2 > SCREENWIDTH || screenY2 < -blupee2.height || screenX2 < -blupee2.width || !blupee2.active) {
         shadowOAM[blupee2.oamIndex].attr0 = ATTR0_HIDE;
     } else {
         int blupee2Y = (blupee2.blupeeDirection == BDOWN) ? 0 : 2;
@@ -416,10 +432,10 @@ void drawBlupees() {
 
     int screenY3 = blupee3.y - vOff;
     int screenX3 = blupee3.x - hOff;
-    if (screenY3 > SCREENHEIGHT || screenX3 > SCREENWIDTH || screenY3 < -blupee3.height || screenX3 < -blupee3.width) {
+    if (screenY3 > SCREENHEIGHT || screenX3 > SCREENWIDTH || screenY3 < -blupee3.height || screenX3 < -blupee3.width || !blupee3.active) {
         shadowOAM[blupee3.oamIndex].attr0 = ATTR0_HIDE;
     } else {
-        int blupee3Y = (blupee3.blupeeDirection2 == BLEFT) ? 4 : 6;
+        int blupee3Y = (blupee3.blupeeDirection == BLEFT) ? 6 : 4;
         shadowOAM[blupee3.oamIndex].attr0 = ATTR0_Y(blupee3.y - vOff) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[blupee3.oamIndex].attr1 = ATTR1_X(blupee3.x - hOff) | ATTR1_SMALL;
         shadowOAM[blupee3.oamIndex].attr2 = ATTR2_PALROW(8) | ATTR2_TILEID((13 + (blupee3.currentFrame * 2)), blupee3Y);
@@ -434,7 +450,7 @@ void drawLotM() {
     } else {
         shadowOAM[lotm.oamIndex].attr0 = ATTR0_Y(lotm.y - vOff) | ATTR0_REGULAR | ATTR0_WIDE;
         shadowOAM[lotm.oamIndex].attr1 = ATTR1_X(lotm.x - hOff) | ATTR1_LARGE;
-        shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(4) | ATTR2_TILEID((6  + (lotm.currentFrame * 8)), 20);
+        shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(8) | ATTR2_TILEID(14, 20);
     }
 }
 

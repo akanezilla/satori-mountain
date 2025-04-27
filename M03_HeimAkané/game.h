@@ -14,6 +14,7 @@ void initChest();
 void initArmor();
 void initMarker();
 void initStamina();
+void initTree();
 void updateGame();
 void updatePlayer();
 void updateKorok1();
@@ -32,6 +33,8 @@ void drawChests();
 void drawArmor();
 void drawMarker();
 void drawStamina();
+void drawTree();
+void hideTrees();
 
 extern enum DIRECTION {DOWN, RIGHT, UP, LEFT} direction;
 enum KOROKDIRECTION {KDOWN, KUP} korokDirection;

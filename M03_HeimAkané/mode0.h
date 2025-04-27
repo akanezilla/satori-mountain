@@ -5,6 +5,8 @@
 
 void eraseText();
 void textToTile(char string[], int offset);
+void printArrow();
+void printButton();
 
 // Background Control Registers
 #define REG_BG0CNT (*(volatile unsigned short*) 0x4000008) // Background 0 control register
