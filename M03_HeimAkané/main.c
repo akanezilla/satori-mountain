@@ -28,6 +28,8 @@
 #include "clouds.h"
 #include "cloudTiles.h"
 #include "grass.h"
+#include "winSong.h"
+#include "link.h"
 
 void initialize();
 
@@ -47,6 +49,9 @@ void goToSpring();
 void spring();
 void goToTrial();
 void trial();
+void winInit();
+void winUpdate();
+void winDraw();
 
 enum STATE {START, INSTRUCTIONS, GAME, PAUSE, WIN, LOSE, SPRING, TRIAL} state;
 
@@ -207,7 +212,7 @@ void pause() {
 }
 
 void goToWin() {
-    REG_DISPCTL = MODE(0) | BG_ENABLE(0) | BG_ENABLE(1);
+    REG_DISPCTL = MODE(0) | BG_ENABLE(0) | BG_ENABLE(1) | SPRITE_ENABLE;
     REG_BG0CNT = BG_CHARBLOCK(0) | BG_SCREENBLOCK(24) | 1;
     REG_BG1CNT = BG_SCREENBLOCK(25) | BG_CHARBLOCK(2) | 0;
 
@@ -221,14 +226,28 @@ void goToWin() {
     hOff2 = 0;
     vOff = 0;
 
-    player.active = 0;
+    //player.active = 0;
+    setupSounds();
+    playSoundA(winSong_data, winSong_length, 1);
     hideSprites();
+    numbers.active = 0;
+    piece1.active = 0;
+    piece2.active = 0;
+    piece3.active = 0;
+    piece4.active = 0;
+    piece5.active = 0;
+    numbers.active = 0;
+    staminaBar.active = 0;
     DMANow(3, shadowOAM, OAM, 128*4);
 
+    winInit();
     state = WIN;
 }
 
 void win() {
+    winUpdate();
+    winDraw();
+    DMANow(3, shadowOAM, OAM, 128*4);
     hOff += 1;
     hOff2 += 2;
     REG_BG0HOFF = hOff;
@@ -310,5 +329,79 @@ void trial() {
     waitForVBlank();
     if (BUTTON_PRESSED(BUTTON_START)) {
         goToPause();
+    }
+}
+
+void winInit() {
+    player.x = 104;
+    player.y = 125;
+    player.width = 16;
+    player.height = 24;
+    player.oamIndex = 0;
+    player.isAnimating = 1;
+    player.numFrames = 3;
+    player.direction = RIGHT;
+    player.timeUntilNextFrame = 5;
+    player.active = 1;
+    player.currentFrame = 0;
+
+    lotm.x = 69;
+    lotm.y = 125;
+    lotm.width = 42;
+    lotm.height = 32;
+    lotm.oamIndex = 1;
+    lotm.isAnimating = 1;
+    lotm.numFrames = 3;
+    lotm.direction = RIGHT;
+    lotm.timeUntilNextFrame = 5;
+    lotm.active = 1;
+    lotm.currentFrame = 0;
+
+    DMANow(3, linkTiles, &CHARBLOCK[4], linkTilesLen / 2);
+    DMANow(3, linkPal, SPRITE_PAL, 256);
+}
+
+void winUpdate() {
+    if (player.isAnimating) {
+        --player.timeUntilNextFrame;
+        if (player.timeUntilNextFrame == 0) {
+            player.currentFrame = (player.currentFrame + 1) % player.numFrames;
+            player.timeUntilNextFrame = 5;
+        }
+    } else {
+        player.currentFrame = 1;
+        player.timeUntilNextFrame = 5;
+    }
+
+    if (lotm.isAnimating) {
+        --lotm.timeUntilNextFrame;
+        if (lotm.timeUntilNextFrame == 0) {
+            lotm.currentFrame = (lotm.currentFrame + 1) % lotm.numFrames;
+            lotm.timeUntilNextFrame = 5;
+        }
+    } else {
+        lotm.currentFrame = 0;
+    }
+}
+
+void winDraw() {
+    if (player.active && !hasArmor) {
+        shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y) | ATTR0_REGULAR | ATTR0_TALL;
+        shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x) | ATTR1_MEDIUM;
+        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(player.colorstate) | ATTR2_TILEID(player.currentFrame * 2, 4) | ATTR2_PRIORITY(0);
+    } else if (player.active && hasArmor) {
+        shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y) | ATTR0_REGULAR | ATTR0_TALL;
+        shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x) | ATTR1_MEDIUM;
+        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(7) | ATTR2_TILEID(6 + (player.currentFrame * 2), 4)  | ATTR2_PRIORITY(0);
+    } else {
+        shadowOAM[player.oamIndex].attr0 = ATTR0_HIDE;
+    }
+
+    if (lotm.active) {
+        shadowOAM[lotm.oamIndex].attr0 = ATTR0_Y(lotm.y) | ATTR0_REGULAR | ATTR0_WIDE;
+            shadowOAM[lotm.oamIndex].attr1 = ATTR1_X(lotm.x) | ATTR1_LARGE;
+            shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(8) | ATTR2_TILEID((6  + (lotm.currentFrame * 8)), 24) | ATTR2_PRIORITY(0);
+    } else {
+        shadowOAM[lotm.oamIndex].attr0 = ATTR0_HIDE;
     }
 }

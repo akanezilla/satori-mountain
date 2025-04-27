@@ -105,7 +105,8 @@ void initBar() {
     staminaBar.width = 24;
     staminaBar.height = 24;
     staminaBar.oamIndex = 7;
-    
+    staminaBar.active = 1;
+
     piece1.x = 2;
     piece1.y = 17;
     piece1.width = 16;
@@ -381,9 +382,13 @@ void drawLotMTrial() {
 
 void drawBar() {
     //bar
-    shadowOAM[staminaBar.oamIndex].attr0 = ATTR0_Y(staminaBar.y) | ATTR0_REGULAR | ATTR0_SQUARE;
-    shadowOAM[staminaBar.oamIndex].attr1 = ATTR1_X(staminaBar.x) | ATTR1_MEDIUM;
-    shadowOAM[staminaBar.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(19, 0);
+    if (staminaBar.active) {
+        shadowOAM[staminaBar.oamIndex].attr0 = ATTR0_Y(staminaBar.y) | ATTR0_REGULAR | ATTR0_SQUARE;
+        shadowOAM[staminaBar.oamIndex].attr1 = ATTR1_X(staminaBar.x) | ATTR1_MEDIUM;
+        shadowOAM[staminaBar.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(19, 0);
+    } else {
+        shadowOAM[staminaBar.oamIndex].attr0 = ATTR0_HIDE;
+    }
 
     //pieces
     if (piece1.active) {
