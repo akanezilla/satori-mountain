@@ -430,7 +430,7 @@ void winDraw() {
     if (player.active && !hasArmor) {
         shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y) | ATTR0_REGULAR | ATTR0_TALL;
         shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x) | ATTR1_MEDIUM;
-        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(player.colorstate) | ATTR2_TILEID(player.currentFrame * 2, 4) | ATTR2_PRIORITY(0);
+        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(player.currentFrame * 2, 4) | ATTR2_PRIORITY(0);
     } else if (player.active && hasArmor) {
         shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y) | ATTR0_REGULAR | ATTR0_TALL;
         shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x) | ATTR1_MEDIUM;

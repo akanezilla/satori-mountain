@@ -332,7 +332,6 @@ void initPlayer() {
     player.oldX = player.x;
     player.oldY = player.y;
     player.active = 1;
-    player.colorstate = 1;
     player.colorTimer = 0;
 }
 
@@ -352,7 +351,6 @@ void reinitPlayer() {
     player.oldX = player.x;
     player.oldY = player.y;
     player.active = 1;
-    player.colorstate = 1;
     player.colorTimer = 0;
 }
 
@@ -557,18 +555,6 @@ void updatePlayer() {
         goToSpring();
         hideTrees();
     }
-
-    //make player flash if collecting a spirit orb
-    if (player.colorstate == 9 && player.colorTimer == 0) {
-        player.colorTimer = 60;
-    }
-
-    if (player.colorTimer > 0) {
-        player.colorTimer--;
-        if (player.colorTimer == 0) {
-            player.colorstate = 1;
-        }
-    }
 }
 
 void updateMarker() {
@@ -750,7 +736,6 @@ void updateSpiritOrb() {
             playSoundB(get_data, get_length, 0);
             spiritOrb1.active = 0;
             spiritOrbCount++;
-            player.colorstate = 9;
             collected1 = 1;
         }
     }
@@ -759,7 +744,6 @@ void updateSpiritOrb() {
             playSoundB(get_data, get_length, 0);
             spiritOrb2.active = 0;
             spiritOrbCount++;
-            player.colorstate = 9;
             collected2 = 1;
         }
 
@@ -769,7 +753,6 @@ void updateSpiritOrb() {
             playSoundB(get_data, get_length, 0);
             spiritOrb3.active = 0;
             spiritOrbCount++;
-            player.colorstate = 9;
             collected3 = 1;
         }
     }
@@ -822,7 +805,7 @@ void drawPlayer() {
     if (player.active && !hasArmor) {
         shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y - vOff) | ATTR0_REGULAR | ATTR0_TALL;
         shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x - hOff) | ATTR1_MEDIUM;
-        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(player.colorstate) | ATTR2_TILEID(player.currentFrame * 2, player.direction * 4) | ATTR2_PRIORITY(2);
+        shadowOAM[player.oamIndex].attr2 = ATTR2_PALROW(1) | ATTR2_TILEID(player.currentFrame * 2, player.direction * 4) | ATTR2_PRIORITY(2);
         REG_BG1HOFF = hOff;
         REG_BG1VOFF = vOff;
     } else if (player.active && hasArmor) {

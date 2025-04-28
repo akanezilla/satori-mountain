@@ -4,13 +4,13 @@
 #include "mode0.h"
 #include "fight.h"
 #include "digitalSound.h"
+#include "trialCollision.h"
 
 void initTrial();
 void initPlayerTrial();
 void initLotMTrial();
 void initBar();
 void initNumbers();
-//void initHearts();
 void initHeartsWin();
 void initWinWord();
 void updateTrial();
@@ -18,7 +18,6 @@ void updatePlayerTrial();
 void updateLotMTrial();
 void updateBar();
 void updateNumbers();
-//void updateHearts();
 void updateHeartsWin();
 void drawTrial();
 void drawPlayerTrial();
@@ -73,7 +72,6 @@ void initTrial() {
     initLotMTrial();
     initBar();
     initNumbers();
-    //initHearts();
 
     hideSprites();
     waitForVBlank();
@@ -191,28 +189,28 @@ void updatePlayerTrial() {
     if (BUTTON_HELD(BUTTON_UP)) {
         player.isAnimating = 1;
         player.direction = UP;
-        if (player.y + player.height < MAPHEIGHT) { //&& colorAt3(leftX, topY - player.yVel) && colorAt3(rightX, topY - player.yVel)) {
+        if (player.y + player.height < MAPHEIGHT && colorAt3(leftX, topY - player.yVel) && colorAt3(rightX, topY - player.yVel)) {
             player.y -= player.yVel;
         }
     }
     if (BUTTON_HELD(BUTTON_DOWN)) {
         player.isAnimating = 1;
         player.direction = DOWN;
-        if (player.y + player.height < MAPHEIGHT) { //&& colorAt3(leftX, bottomY + player.yVel) && colorAt3(rightX, bottomY + player.yVel)) {
+        if (player.y + player.height < MAPHEIGHT && colorAt3(leftX, bottomY + player.yVel) && colorAt3(rightX, bottomY + player.yVel)) {
             player.y += player.yVel;
         }
     }
     if (BUTTON_HELD(BUTTON_RIGHT) && (player.x + player.width) < MAPWIDTH) {
         player.isAnimating = 1;
         player.direction = RIGHT;
-        if ((player.x + player.width) < MAPWIDTH) { //&& colorAt3(rightX + player.xVel, topY) && colorAt3(rightX + player.xVel, bottomY)) {
+        if ((player.x + player.width) < MAPWIDTH && colorAt3(rightX + player.xVel, topY) && colorAt3(rightX + player.xVel, bottomY)) {
             player.x += player.xVel;
         }
     } 
     if (BUTTON_HELD(BUTTON_LEFT)) {
         player.isAnimating = 1;
         player.direction = LEFT;
-        if ((player.x + player.width) < MAPWIDTH) { //&& colorAt3(leftX - player.xVel, topY) && colorAt3(leftX - player.xVel, bottomY)) {
+        if ((player.x + player.width) < MAPWIDTH && colorAt3(leftX - player.xVel, topY) && colorAt3(leftX - player.xVel, bottomY)) {
             player.x -= player.xVel;
         }
     }
@@ -223,7 +221,7 @@ void updatePlayerTrial() {
 
     //modify sprite pal if collision with lotm happens
     if (collision(player.x, player.y, player.width, player.height, lotm.x, lotm.y, lotm.width, lotm.height)) {
-        SPRITE_PAL[139] = GREEN;
+        SPRITE_PAL[139] = YELLOW;
     } else {
         SPRITE_PAL[139] = BLACK;
     }
@@ -592,6 +590,6 @@ void drawWinWord() {
     }
 }
 
-// inline unsigned char colorAt3(int x, int y) {
-//     return ((unsigned char*) //collisionSpringBitmap) [OFFSET(x, y, MAPWIDTH)];
-// }
+inline unsigned char colorAt3(int x, int y) {
+    return ((unsigned char*) trialCollisionBitmap) [OFFSET(x, y, MAPWIDTH)];
+}

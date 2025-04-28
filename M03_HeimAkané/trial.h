@@ -8,7 +8,6 @@ void initPlayerTrial();
 void initLotMTrial();
 void initBar();
 void initNumbers();
-//void initHearts();
 void initHeartsWin();
 void initWinWord();
 void updateTrial();
@@ -16,7 +15,6 @@ void updatePlayerTrial();
 void updateLotM();
 void updateBar();
 void updateNumbers();
-//void updateHearts();
 void updateHeartsWin();
 void drawTrial();
 void drawPlayerTrial();
@@ -51,7 +49,7 @@ OBJ_ATTR shadowOAM[128];
 
 //color
 #define BLACK   RGB(0, 0, 0)
-#define GREEN    RGB(8, 24, 5)
+#define YELLOW    RGB(31, 31, 15)
 
 extern int vOff;
 extern int hOff;
