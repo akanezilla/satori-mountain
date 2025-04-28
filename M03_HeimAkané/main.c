@@ -290,6 +290,7 @@ void goToSpring() {
     DMANow(3, springMapMap, &SCREENBLOCK[8], springMapLen / 2);
     DMANow(3, springPal, BG_PALETTE, springPalLen / 2);
 
+    
     hideSprites();
     
     DMANow(3, shadowOAM, OAM, 128*4);
@@ -316,6 +317,7 @@ void goToTrial() {
     blupee1.active = 0;
     blupee2.active = 0;
     blupee3.active = 0;
+    korok.active = 0;
     hideSprites();
 
     DMANow(3, shadowOAM, OAM, 128*4);

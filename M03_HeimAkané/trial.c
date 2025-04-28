@@ -10,7 +10,7 @@ void initPlayerTrial();
 void initLotMTrial();
 void initBar();
 void initNumbers();
-void initHearts();
+//void initHearts();
 void initHeartsWin();
 void initWinWord();
 void updateTrial();
@@ -18,7 +18,7 @@ void updatePlayerTrial();
 void updateLotMTrial();
 void updateBar();
 void updateNumbers();
-void updateHearts();
+//void updateHearts();
 void updateHeartsWin();
 void drawTrial();
 void drawPlayerTrial();
@@ -73,7 +73,7 @@ void initTrial() {
     initLotMTrial();
     initBar();
     initNumbers();
-    initHearts();
+    //initHearts();
 
     hideSprites();
     waitForVBlank();
@@ -173,7 +173,7 @@ void updateTrial() {
     updateLotMTrial();
     updateBar();
     updateNumbers();
-    updateHearts();
+    //updateHearts();
 }
 
 void updatePlayerTrial() {
@@ -346,7 +346,6 @@ void updateNumbers() {
             goToLose();
         }
     }
-
 }
 
 void drawTrial() {
@@ -400,7 +399,6 @@ void drawLotMTrial() {
             shadowOAM[lotm.oamIndex].attr1 = ATTR1_X(lotm.x - hOff) | ATTR1_MEDIUM;
             shadowOAM[lotm.oamIndex].attr2 = ATTR2_PALROW(8) | ATTR2_TILEID(14, 12 + (lotm.currentFrame * 4));
         }
-        
     }
 }
 
@@ -467,21 +465,21 @@ void drawNumbers() {
     }
 }
 
-void initHearts() {
-    hearts.x = lotm.x + lotm.width;
-    hearts.y = lotm.y - 3;
-    hearts.width = 8;
-    hearts.height = 8;
-    hearts.numFrames = 4;
-    hearts.isAnimating = 0;
-    hearts.currentFrame = 0;
-    hearts.timeUntilNextFrame = 10;
-    hearts.active = 0;
-    hearts.oamIndex = 9;
+// void initHearts() {
+//     hearts.x = lotm.x + lotm.width;
+//     hearts.y = lotm.y - 3;
+//     hearts.width = 8;
+//     hearts.height = 8;
+//     hearts.numFrames = 4;
+//     hearts.isAnimating = 0;
+//     hearts.currentFrame = 0;
+//     hearts.timeUntilNextFrame = 10;
+//     hearts.active = 0;
+//     hearts.oamIndex = 9;
 
-    hearts2.active = 0;
-    hearts3.active = 0;
-}
+//     hearts2.active = 0;
+//     hearts3.active = 0;
+// }
 
 void initHeartsWin() {
     hearts.x = lotm.x + lotm.width;
@@ -518,26 +516,26 @@ void initHeartsWin() {
     hearts3.oamIndex = 11;
 }
 
-void updateHearts() {
-    hearts.x = lotm.x + lotm.width;
-    hearts.y = lotm.y - 8;
+// void updateHearts() {
+//     hearts.x = lotm.x + lotm.width;
+//     hearts.y = lotm.y - 8;
 
-    if (!hearts.isAnimating) {
-        return;
-    }
+//     if (!hearts.isAnimating) {
+//         return;
+//     }
 
-    if (hearts.isAnimating && hearts.currentFrame != hearts.numFrames) {
-        --hearts.timeUntilNextFrame;
-        if (hearts.timeUntilNextFrame == 0) {
-            hearts.currentFrame = (hearts.currentFrame + 1);
-            hearts.timeUntilNextFrame = 10;
-        }
-    } else if (hearts.isAnimating && hearts.currentFrame >= hearts.numFrames) {
-        hearts.active = 0;
-        hearts.isAnimating = 0;
-        hearts.currentFrame = 0;
-    }
-}
+//     if (hearts.isAnimating && hearts.currentFrame != hearts.numFrames) {
+//         --hearts.timeUntilNextFrame;
+//         if (hearts.timeUntilNextFrame == 0) {
+//             hearts.currentFrame = (hearts.currentFrame + 1);
+//             hearts.timeUntilNextFrame = 10;
+//         }
+//     } else if (hearts.isAnimating && hearts.currentFrame >= hearts.numFrames) {
+//         hearts.active = 0;
+//         hearts.isAnimating = 0;
+//         hearts.currentFrame = 0;
+//     }
+// }
 
 void updateHeartsWin() {
     hearts.x = lotm.x + lotm.width;

@@ -14,6 +14,7 @@ void initChest();
 void initArmor();
 void initMarker();
 void initStamina();
+void reinitStamina();
 void initTree();
 void updateGame();
 void updatePlayer();
@@ -43,6 +44,7 @@ int chestOpened;
 extern int hasArmor;
 extern int spiritOrbCount;
 int cooldown;
+int visible;
 
 #define MAPHEIGHT 512
 #define MAPWIDTH 512

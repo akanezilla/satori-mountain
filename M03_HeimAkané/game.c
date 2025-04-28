@@ -10,6 +10,7 @@
 #include "letters.h"
 #include "yahaha.h"
 #include "interact.h"
+#include "armorGet.h"
 
 void initGame();
 void reInitGame();
@@ -22,6 +23,7 @@ void initChests();
 void initArmor();
 void initMarker();
 void initStamina();
+void reinitStamina();
 void initTree();
 void updateGame();
 void updatePlayer();
@@ -55,6 +57,7 @@ int textActivated;
 int collected1;
 int collected2;
 int collected3;
+int visible;
 
 SPRITE player;
 SPRITE korok1;
@@ -148,6 +151,7 @@ void reInitGame() {
     hOff = 0;
     vOff = 0;
     cooldown = 0;
+    visible = 0;
 
     reinitPlayer();
     initKorok1();
@@ -212,6 +216,48 @@ void initStamina() {
     staminaHold3.active = 1;
 }
 
+void reinitStamina() {
+    if (prevState == SPRING) return;
+    //stamina 1
+    stamina1.x = 180;
+    stamina1.y = 5;
+    stamina1.width = 16;
+    stamina1.height = 16;
+    stamina1.oamIndex = 0;
+
+    staminaHold1.x = 180;
+    staminaHold1.y = 5;
+    staminaHold1.width = 16;
+    staminaHold1.height = 16;
+    staminaHold1.oamIndex = 1;
+
+    //stamina 2
+    stamina2.x = 200;
+    stamina2.y = 5;
+    stamina2.width = 16;
+    stamina2.height = 16;
+    stamina2.oamIndex = 2;
+
+    staminaHold2.x = 200;
+    staminaHold2.y = 5;
+    staminaHold2.width = 16;
+    staminaHold2.height = 16;
+    staminaHold2.oamIndex = 3;
+
+    //stamina 3
+    stamina3.x = 220;
+    stamina3.y = 5;
+    stamina3.width = 16;
+    stamina3.height = 16;
+    stamina3.oamIndex = 4;
+
+    staminaHold3.x = 220;
+    staminaHold3.y = 5;
+    staminaHold3.width = 16;
+    staminaHold3.height = 16;
+    staminaHold3.oamIndex = 5;
+}
+
 void initTree() {
     treeSpawn.x = 168;
     treeSpawn.y = 64;
@@ -263,7 +309,7 @@ void initTree() {
     treeSpring3.active = 1;
 
     treeSpring4.x = 448;
-    treeSpring4.y = 433;
+    treeSpring4.y = 432;
     treeSpring4.width = 64;
     treeSpring4.height = 64;
     treeSpring4.oamIndex = 13;
@@ -379,8 +425,8 @@ void initSpiritOrb() {
     spiritOrb1.active = 1;
 
     //spirit orb 2
-    spiritOrb2.x = 120;
-    spiritOrb2.y = 240;
+    spiritOrb2.x = 424;
+    spiritOrb2.y = 96;
     spiritOrb2.width = 16;
     spiritOrb2.height = 21;
     spiritOrb2.oamIndex = 19;
@@ -396,8 +442,8 @@ void initSpiritOrb() {
 }
 
 void initArmor() {
-    armor.x = 424;
-    armor.y = 80;
+    armor.x = 224;
+    armor.y = 0;
     armor.width = 16;
     armor.height = 32;
     armor.oamIndex = 24;
@@ -405,12 +451,12 @@ void initArmor() {
 }
 
 void initChest() {
-    chest.x = 424;
-    chest.y = 96;
+    chest.x = 224;
+    chest.y = 0;
     chest.width = 16;
     chest.height = 16;
     chest.oamIndex = 25;
-    chest.active = 1;
+    chest.active = 0;
 }
 
 void updateGame() {
@@ -529,7 +575,7 @@ void updateMarker() {
     marker.x = player.x + 4;
     marker.y = player.y - 2;
     //exclamation point if player comes in contact with chest
-    if (collision(player.x, player.y, player.width, player.height, chest.x, chest.y, chest.width, chest.height) && chest.active) {
+    if (collision(player.x, player.y, player.width, player.height, chest.x, chest.y, chest.width, chest.height) && (chest.active || !visible)) {
         marker.active = 1;
     //if korok1 collision
     } else if (collision(player.x, player.y, player.width, player.height, korok1.x, korok1.y, korok1.width, korok1.height)) {
@@ -731,11 +777,22 @@ void updateSpiritOrb() {
 
 void updateChests() {
     //if link collides once and presses START, open chest
-    if (chest.active && !chestOpened) {
-        if (collision(player.x, player.y, player.width, player.height, chest.x, chest.y, chest.width, chest.height)) {
-            if (BUTTON_PRESSED(BUTTON_SELECT)) {
-                chestOpened = 1;
-                armor.active = 1;
+    if (collision(player.x, player.y, player.width, player.height, chest.x, chest.y, chest.width, chest.height) && !chest.active) {
+        if (BUTTON_PRESSED(BUTTON_SELECT)) {
+            chest.active = 1;
+            visible = 1;
+            cooldown = 60;
+        }
+    }
+    if (cooldown > 0) {
+        cooldown--;
+    } else {
+        if (chest.active && !chestOpened) {
+            if (collision(player.x, player.y, player.width, player.height, chest.x, chest.y, chest.width, chest.height) && visible) {
+                if (BUTTON_PRESSED(BUTTON_SELECT)) {
+                    chestOpened = 1;
+                    armor.active = 1;
+                }
             }
         }
     }
@@ -743,7 +800,7 @@ void updateChests() {
     if (BUTTON_PRESSED(BUTTON_A) && armor.active) {
         armor.active = 0;
         hasArmor = 1;
-        playSoundB(get_data, get_length, 0);
+        playSoundB(armorGet_data, armorGet_length, 0);
     }
 }
 
@@ -795,7 +852,7 @@ void drawStamina() {
     if (stamina1.active) {
         shadowOAM[stamina1.oamIndex].attr0 = ATTR0_Y(stamina1.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[stamina1.oamIndex].attr1 = ATTR1_X(stamina1.x) | ATTR1_SMALL;
-        shadowOAM[stamina1.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(26, 0) | ATTR2_PRIORITY(1);
+        shadowOAM[stamina1.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(26, 0) | ATTR2_PRIORITY(0);
     } else {
         shadowOAM[stamina1.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -803,7 +860,7 @@ void drawStamina() {
     if (staminaHold1.active) {
         shadowOAM[staminaHold1.oamIndex].attr0 = ATTR0_Y(staminaHold1.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[staminaHold1.oamIndex].attr1 = ATTR1_X(staminaHold1.x) | ATTR1_SMALL;
-        shadowOAM[staminaHold1.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(28, 0) | ATTR2_PRIORITY(1);
+        shadowOAM[staminaHold1.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(28, 0) | ATTR2_PRIORITY(0);
     } else {
         shadowOAM[staminaHold1.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -811,7 +868,7 @@ void drawStamina() {
     if (stamina2.active) {
         shadowOAM[stamina2.oamIndex].attr0 = ATTR0_Y(stamina2.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[stamina2.oamIndex].attr1 = ATTR1_X(stamina2.x) | ATTR1_SMALL;
-        shadowOAM[stamina2.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(26, 0) | ATTR2_PRIORITY(1);
+        shadowOAM[stamina2.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(26, 0) | ATTR2_PRIORITY(0);
     } else {
         shadowOAM[stamina2.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -819,7 +876,7 @@ void drawStamina() {
     if (staminaHold2.active) {
         shadowOAM[staminaHold2.oamIndex].attr0 = ATTR0_Y(staminaHold2.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[staminaHold2.oamIndex].attr1 = ATTR1_X(staminaHold2.x) | ATTR1_SMALL;
-        shadowOAM[staminaHold2.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(28, 0) | ATTR2_PRIORITY(1);
+        shadowOAM[staminaHold2.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(28, 0) | ATTR2_PRIORITY(0);
     } else {
         shadowOAM[staminaHold2.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -827,7 +884,7 @@ void drawStamina() {
     if (stamina3.active) {
         shadowOAM[stamina3.oamIndex].attr0 = ATTR0_Y(stamina3.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[stamina3.oamIndex].attr1 = ATTR1_X(stamina3.x) | ATTR1_SMALL;
-        shadowOAM[stamina3.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(26, 0) | ATTR2_PRIORITY(1);
+        shadowOAM[stamina3.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(26, 0) | ATTR2_PRIORITY(0);
     } else {
         shadowOAM[stamina3.oamIndex].attr0 = ATTR0_HIDE;
     }
@@ -835,7 +892,7 @@ void drawStamina() {
     if (staminaHold3.active) {
         shadowOAM[staminaHold3.oamIndex].attr0 = ATTR0_Y(staminaHold3.y) | ATTR0_REGULAR | ATTR0_SQUARE;
         shadowOAM[staminaHold3.oamIndex].attr1 = ATTR1_X(staminaHold3.x) | ATTR1_SMALL;
-        shadowOAM[staminaHold3.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(28, 0) | ATTR2_PRIORITY(1);
+        shadowOAM[staminaHold3.oamIndex].attr2 = ATTR2_PALROW(3) | ATTR2_TILEID(28, 0) | ATTR2_PRIORITY(0);
     } else {
         shadowOAM[staminaHold3.oamIndex].attr0 = ATTR0_HIDE;
     }
