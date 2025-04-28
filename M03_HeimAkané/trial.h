@@ -49,6 +49,10 @@ OBJ_ATTR shadowOAM[128];
 #define MAPHEIGHT 256
 #define MAPWIDTH 256
 
+//color
+#define BLACK   RGB(0, 0, 0)
+#define GREEN    RGB(8, 24, 5)
+
 extern int vOff;
 extern int hOff;
 

@@ -221,6 +221,13 @@ void updatePlayerTrial() {
         staminaCount++;
     }
 
+    //modify sprite pal if collision with lotm happens
+    if (collision(player.x, player.y, player.width, player.height, lotm.x, lotm.y, lotm.width, lotm.height)) {
+        SPRITE_PAL[139] = GREEN;
+    } else {
+        SPRITE_PAL[139] = BLACK;
+    }
+
     //restrict player to map
     if (player.x < 0) {
         player.x = 0;
