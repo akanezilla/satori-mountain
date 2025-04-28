@@ -10,16 +10,23 @@ void initPlayerTrial();
 void initLotMTrial();
 void initBar();
 void initNumbers();
+void initHearts();
+void initHeartsWin();
+void initWinWord();
 void updateTrial();
 void updatePlayerTrial();
 void updateLotMTrial();
 void updateBar();
 void updateNumbers();
+void updateHearts();
+void updateHeartsWin();
 void drawTrial();
 void drawPlayerTrial();
 void drawLotMTrial();
 void drawBar();
 void drawNumbers();
+void drawHearts();
+void drawWinWord();
 inline unsigned char colorAt3(int x, int y);
 
 enum DIRECTION {DOWN, RIGHT, UP, LEFT} direction;
@@ -36,6 +43,10 @@ SPRITE fifteen;
 SPRITE fourteen;
 SPRITE thirteen;
 SPRITE numbers;
+SPRITE hearts;
+SPRITE hearts2;
+SPRITE hearts3;
+SPRITE winWord;
 
 int staminaCount;
 int alreadyAnimated;
@@ -62,6 +73,7 @@ void initTrial() {
     initLotMTrial();
     initBar();
     initNumbers();
+    initHearts();
 
     hideSprites();
     waitForVBlank();
@@ -161,6 +173,7 @@ void updateTrial() {
     updateLotMTrial();
     updateBar();
     updateNumbers();
+    updateHearts();
 }
 
 void updatePlayerTrial() {
@@ -290,14 +303,24 @@ void updateLotMTrial() {
 void updateBar() {
     if (staminaCount == 10 && !piece2.active) {
         piece2.active = 1;
+        hearts.isAnimating = 1;
+        hearts.active = 1;
     } else if (staminaCount == 20 && !piece4.active) {
         piece4.active = 1;
+        hearts.isAnimating = 1;
+        hearts.active = 1;
     } else if (staminaCount == 30 && !piece5.active) {
         piece5.active = 1;
+        hearts.isAnimating = 1;
+        hearts.active = 1;
     } else if (staminaCount == 40 && !piece3.active) {
         piece3.active = 1;
+        hearts.isAnimating = 1;
+        hearts.active = 1;
     } else if (staminaCount == 50 && !piece1.active) {
         piece1.active = 1;
+        hearts.isAnimating = 1;
+        hearts.active = 1;
         goToWin();
     }
 }
@@ -331,6 +354,7 @@ void drawTrial() {
     drawLotMTrial();
     drawBar();
     drawNumbers();
+    drawHearts();
 }
 
 void drawPlayerTrial() {
@@ -440,6 +464,164 @@ void drawNumbers() {
         shadowOAM[numbers.oamIndex].attr2 = ATTR2_PALROW(5) | ATTR2_TILEID(12 + ((numbers.currentFrame % 8) * 2), numbersY);
     } else {
         shadowOAM[numbers.oamIndex].attr0 = ATTR0_HIDE;
+    }
+}
+
+void initHearts() {
+    hearts.x = lotm.x + lotm.width;
+    hearts.y = lotm.y - 3;
+    hearts.width = 8;
+    hearts.height = 8;
+    hearts.numFrames = 4;
+    hearts.isAnimating = 0;
+    hearts.currentFrame = 0;
+    hearts.timeUntilNextFrame = 10;
+    hearts.active = 0;
+    hearts.oamIndex = 9;
+
+    hearts2.active = 0;
+    hearts3.active = 0;
+}
+
+void initHeartsWin() {
+    hearts.x = lotm.x + lotm.width;
+    hearts.y = lotm.y - 8;
+    hearts.width = 8;
+    hearts.height = 8;
+    hearts.numFrames = 4;
+    hearts.isAnimating = 1;
+    hearts.currentFrame = 1;
+    hearts.timeUntilNextFrame = 10;
+    hearts.active = 1;
+    hearts.oamIndex = 9;
+
+    hearts2.x = lotm.x + lotm.width + 6;
+    hearts2.y = lotm.y - 10;
+    hearts2.width = 8;
+    hearts2.height = 8;
+    hearts2.numFrames = 4;
+    hearts2.isAnimating = 1;
+    hearts2.currentFrame = 2;
+    hearts2.timeUntilNextFrame = 10;
+    hearts2.active = 1;
+    hearts2.oamIndex = 10;
+
+    hearts3.x = lotm.x + lotm.width + 3;
+    hearts3.y = lotm.y - 12;
+    hearts3.width = 8;
+    hearts3.height = 8;
+    hearts3.numFrames = 4;
+    hearts3.isAnimating = 1;
+    hearts3.currentFrame = 4;
+    hearts3.timeUntilNextFrame = 10;
+    hearts3.active = 1;
+    hearts3.oamIndex = 11;
+}
+
+void updateHearts() {
+    hearts.x = lotm.x + lotm.width;
+    hearts.y = lotm.y - 8;
+
+    if (!hearts.isAnimating) {
+        return;
+    }
+
+    if (hearts.isAnimating && hearts.currentFrame != hearts.numFrames) {
+        --hearts.timeUntilNextFrame;
+        if (hearts.timeUntilNextFrame == 0) {
+            hearts.currentFrame = (hearts.currentFrame + 1);
+            hearts.timeUntilNextFrame = 10;
+        }
+    } else if (hearts.isAnimating && hearts.currentFrame >= hearts.numFrames) {
+        hearts.active = 0;
+        hearts.isAnimating = 0;
+        hearts.currentFrame = 0;
+    }
+}
+
+void updateHeartsWin() {
+    hearts.x = lotm.x + lotm.width;
+    hearts.y = lotm.y - 8;
+
+    hearts2.x = lotm.x + lotm.width + 8;
+    hearts2.y = lotm.y - 10;
+
+    hearts3.x = lotm.x + lotm.width + 2;
+    hearts3.y = lotm.y - 15;
+
+    if (hearts.isAnimating) {
+        --hearts.timeUntilNextFrame;
+        if (hearts.timeUntilNextFrame == 0) {
+            hearts.currentFrame = (hearts.currentFrame + 1) % hearts.numFrames;
+            hearts.timeUntilNextFrame = 10;
+        }
+    } else {
+        hearts.currentFrame = 1;
+    }
+
+    if (hearts2.isAnimating) {
+        --hearts2.timeUntilNextFrame;
+        if (hearts2.timeUntilNextFrame == 0) {
+            hearts2.currentFrame = (hearts2.currentFrame + 1) % hearts2.numFrames;
+            hearts2.timeUntilNextFrame = 10;
+        }
+    } else {
+        hearts2.currentFrame = 2;
+    }
+
+    if (hearts3.isAnimating) {
+        --hearts3.timeUntilNextFrame;
+        if (hearts3.timeUntilNextFrame == 0) {
+            hearts3.currentFrame = (hearts3.currentFrame + 1) % hearts3.numFrames;
+            hearts3.timeUntilNextFrame = 10;
+        }
+    } else {
+        hearts3.currentFrame = 4;
+    }
+}
+
+void drawHearts() {
+    if (hearts.active) {
+        shadowOAM[hearts.oamIndex].attr0 = ATTR0_Y(hearts.y) | ATTR0_REGULAR | ATTR0_SQUARE;
+        shadowOAM[hearts.oamIndex].attr1 = ATTR1_X(hearts.x) | ATTR1_TINY;
+        shadowOAM[hearts.oamIndex].attr2 = ATTR2_PALROW(11) | ATTR2_TILEID(30 , 20 + hearts.currentFrame);
+    } else {
+        shadowOAM[hearts.oamIndex].attr0 = ATTR0_HIDE;
+    }
+
+    if (hearts2.active) {
+        shadowOAM[hearts2.oamIndex].attr0 = ATTR0_Y(hearts2.y) | ATTR0_REGULAR | ATTR0_SQUARE;
+        shadowOAM[hearts2.oamIndex].attr1 = ATTR1_X(hearts2.x) | ATTR1_TINY;
+        shadowOAM[hearts2.oamIndex].attr2 = ATTR2_PALROW(11) | ATTR2_TILEID(30 , 20 + hearts2.currentFrame);
+    } else {
+        shadowOAM[hearts2.oamIndex].attr0 = ATTR0_HIDE;
+    }
+
+    if (hearts3.active) {
+        shadowOAM[hearts3.oamIndex].attr0 = ATTR0_Y(hearts3.y) | ATTR0_REGULAR | ATTR0_SQUARE;
+        shadowOAM[hearts3.oamIndex].attr1 = ATTR1_X(hearts3.x) | ATTR1_TINY;
+        shadowOAM[hearts3.oamIndex].attr2 = ATTR2_PALROW(11) | ATTR2_TILEID(30 , 20 + hearts3.currentFrame);
+    } else {
+        shadowOAM[hearts3.oamIndex].attr0 = ATTR0_HIDE;
+    }
+}
+
+void initWinWord() {
+    winWord.x = 104;
+    winWord.y = 30;
+    winWord.width = 32;
+    winWord.height = 32;
+    winWord.active = 1;
+    winWord.oamIndex = 12;
+}
+
+void drawWinWord() {
+    if (winWord.active) {
+        shadowOAM[winWord.oamIndex].attr0 = ATTR0_Y(winWord.y) | ATTR0_REGULAR | ATTR0_SQUARE;
+        shadowOAM[winWord.oamIndex].attr1 = ATTR1_X(winWord.x) | ATTR1_MEDIUM;
+        shadowOAM[winWord.oamIndex].attr2 = ATTR2_PALROW(11) | ATTR2_TILEID(28 , 8);
+    } else {
+        shadowOAM[winWord.oamIndex].attr0 = ATTR0_HIDE;
     }
 }
 

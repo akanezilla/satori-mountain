@@ -333,6 +333,9 @@ void trial() {
 }
 
 void winInit() {
+    initHeartsWin();
+    initWinWord();
+
     player.x = 104;
     player.y = 125;
     player.width = 16;
@@ -382,9 +385,13 @@ void winUpdate() {
     } else {
         lotm.currentFrame = 0;
     }
+    updateHeartsWin();
 }
 
 void winDraw() {
+    drawHearts();
+    drawWinWord();
+    
     if (player.active && !hasArmor) {
         shadowOAM[player.oamIndex].attr0 = ATTR0_Y(player.y) | ATTR0_REGULAR | ATTR0_TALL;
         shadowOAM[player.oamIndex].attr1 = ATTR1_X(player.x) | ATTR1_MEDIUM;

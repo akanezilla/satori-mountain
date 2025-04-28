@@ -8,16 +8,24 @@ void initPlayerTrial();
 void initLotMTrial();
 void initBar();
 void initNumbers();
+void initHearts();
+void initHeartsWin();
+void initWinWord();
 void updateTrial();
 void updatePlayerTrial();
 void updateLotM();
 void updateBar();
 void updateNumbers();
+void updateHearts();
+void updateHeartsWin();
 void drawTrial();
 void drawPlayerTrial();
 void drawLotMTrial();
 void drawBar();
 void drawNumbers();
+void drawHearts();
+void drawWinWord();
+
 inline unsigned char colorAt3(int x, int y);
 
 SPRITE player;
@@ -29,6 +37,10 @@ SPRITE piece3;
 SPRITE piece4;
 SPRITE piece5;
 SPRITE numbers;
+SPRITE hearts;
+SPRITE hearts2;
+SPRITE hearts3;
+SPRITE winWord;
 
 int staminaCount;
 
