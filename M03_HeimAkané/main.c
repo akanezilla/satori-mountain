@@ -7,6 +7,7 @@
 #include "start.h"
 #include "instructions.h"
 #include "instructionsPal.h"
+#include "instructions2.h"
 #include "zelda.h"
 #include "zeldaMap.h"
 #include "win.h"
@@ -37,6 +38,8 @@ void goToStart();
 void start();
 void goToInstructions();
 void instructions();
+void goToInstructions2();
+void instructions2();
 void goToGame();
 void game();
 void goToPause();
@@ -53,7 +56,7 @@ void winInit();
 void winUpdate();
 void winDraw();
 
-enum STATE {START, INSTRUCTIONS, GAME, PAUSE, WIN, LOSE, SPRING, TRIAL} state;
+enum STATE {START, INSTRUCTIONS, INSTRUCTIONS2, GAME, PAUSE, WIN, LOSE, SPRING, TRIAL} state;
 
 unsigned short buttons;
 unsigned short oldButtons;
@@ -78,6 +81,9 @@ int main() {
                 break;
             case INSTRUCTIONS:
                 instructions();
+                break;
+            case INSTRUCTIONS2:
+                instructions2();
                 break;
             case GAME:
                 game();
@@ -122,6 +128,10 @@ void goToStart() {
     waitForVBlank();
     flipPages();
 
+    drawFullscreenImage4(startBitmap);
+    waitForVBlank();
+    flipPages(); 
+
     state = START;
 }
 
@@ -133,9 +143,12 @@ void start() {
 }
 
 void goToInstructions() {
-    DMANow(3, instructionsPal, BG_PALETTE, 256);
-    drawFullscreenImage4(instructionsBitmap);
+    DMANow(3, instructions2Pal, BG_PALETTE, 256);
+    drawFullscreenImage4(instructions2Bitmap);
+    waitForVBlank();
+    flipPages();
 
+    drawFullscreenImage4(instructions2Bitmap);
     waitForVBlank();
     flipPages();
 
@@ -143,6 +156,26 @@ void goToInstructions() {
 }
 
 void instructions() {
+    waitForVBlank();
+    if (BUTTON_PRESSED(BUTTON_START)) {
+        goToInstructions2();
+    }
+}
+
+void goToInstructions2() {
+    DMANow(3, instructionsPal, BG_PALETTE, 256);
+    drawFullscreenImage4(instructionsBitmap);
+    waitForVBlank();
+    flipPages();
+
+    drawFullscreenImage4(instructionsBitmap);
+    waitForVBlank();
+    flipPages();
+
+    state = INSTRUCTIONS2;
+}
+
+void instructions2() {
     waitForVBlank();
     if (BUTTON_PRESSED(BUTTON_START)) {
         initGame();
@@ -290,7 +323,7 @@ void goToSpring() {
     DMANow(3, springMapMap, &SCREENBLOCK[8], springMapLen / 2);
     DMANow(3, springPal, BG_PALETTE, springPalLen / 2);
 
-    
+
     hideSprites();
     
     DMANow(3, shadowOAM, OAM, 128*4);

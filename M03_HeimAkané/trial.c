@@ -353,7 +353,6 @@ void drawTrial() {
     drawLotMTrial();
     drawBar();
     drawNumbers();
-    drawHearts();
 }
 
 void drawPlayerTrial() {
@@ -465,22 +464,6 @@ void drawNumbers() {
     }
 }
 
-// void initHearts() {
-//     hearts.x = lotm.x + lotm.width;
-//     hearts.y = lotm.y - 3;
-//     hearts.width = 8;
-//     hearts.height = 8;
-//     hearts.numFrames = 4;
-//     hearts.isAnimating = 0;
-//     hearts.currentFrame = 0;
-//     hearts.timeUntilNextFrame = 10;
-//     hearts.active = 0;
-//     hearts.oamIndex = 9;
-
-//     hearts2.active = 0;
-//     hearts3.active = 0;
-// }
-
 void initHeartsWin() {
     hearts.x = lotm.x + lotm.width;
     hearts.y = lotm.y - 8;
@@ -515,27 +498,6 @@ void initHeartsWin() {
     hearts3.active = 1;
     hearts3.oamIndex = 11;
 }
-
-// void updateHearts() {
-//     hearts.x = lotm.x + lotm.width;
-//     hearts.y = lotm.y - 8;
-
-//     if (!hearts.isAnimating) {
-//         return;
-//     }
-
-//     if (hearts.isAnimating && hearts.currentFrame != hearts.numFrames) {
-//         --hearts.timeUntilNextFrame;
-//         if (hearts.timeUntilNextFrame == 0) {
-//             hearts.currentFrame = (hearts.currentFrame + 1);
-//             hearts.timeUntilNextFrame = 10;
-//         }
-//     } else if (hearts.isAnimating && hearts.currentFrame >= hearts.numFrames) {
-//         hearts.active = 0;
-//         hearts.isAnimating = 0;
-//         hearts.currentFrame = 0;
-//     }
-// }
 
 void updateHeartsWin() {
     hearts.x = lotm.x + lotm.width;
